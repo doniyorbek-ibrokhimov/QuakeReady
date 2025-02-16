@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  HomeView.swift
 //  QuakeReady
 //
 //  Created by Doniyorbek Ibrokhimov on 16/02/25.
@@ -7,13 +7,8 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct HomeView: View {
     @State private var selectedTab = 0
-    
-    private let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
-    ]
     
     // Mock data for global risks
     private let countries: [Country] = [
@@ -48,7 +43,7 @@ struct ContentView: View {
                 .tag(1)
             
             // Quiz Tab
-            QuizView()
+            QuizLibraryView()
                 .tabItem {
                     Label("Quiz", systemImage: "questionmark.circle.fill")
                 }
@@ -154,6 +149,7 @@ struct ScaleButtonStyle: ButtonStyle {
     }
 }
 
+// FIXME: move to a separate file
 struct Country: Identifiable {
     let id: UUID
     let name: String
@@ -164,5 +160,5 @@ struct Country: Identifiable {
 }
 
 #Preview {
-    ContentView()
+    HomeView()
 }

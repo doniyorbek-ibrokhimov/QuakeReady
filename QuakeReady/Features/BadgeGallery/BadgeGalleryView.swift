@@ -90,6 +90,7 @@ struct BadgeGalleryView: View {
     }
 }
 
+// FIXME: make this an enum as all badges will be predefined
 struct Badge: Identifiable {
     let id = UUID()
     let title: String

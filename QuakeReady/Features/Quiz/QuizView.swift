@@ -1,53 +1,22 @@
 import SwiftUI
 
 struct QuizView: View {
+    let quiz: Quiz
+    
     @State private var currentQuestionIndex = 0
     @State private var selectedAnswerIndex: Int?
     @State private var showFeedback = false
     @State private var quizCompleted = false
     @State private var correctAnswers = 0
     
-    private let questions = [
-        Question(
-            scenario: "You're in a mall during a quake",
-            options: [
-                "Hide under a counter",
-                "Run to the exit",
-                "Stand near windows"
-            ],
-            correctIndex: 0,
-            feedback: "Correct! Stay low and protected."
-        ),
-        Question(
-            scenario: "During an earthquake at home, you should",
-            options: [
-                "Use elevator to evacuate",
-                "Drop, cover, and hold on",
-                "Call emergency immediately"
-            ],
-            correctIndex: 1,
-            feedback: "Right! Drop, cover, hold is the safest response."
-        ),
-        Question(
-            scenario: "After an earthquake, you notice gas smell",
-            options: [
-                "Light a match to check",
-                "Turn on ventilation",
-                "Exit immediately"
-            ],
-            correctIndex: 2,
-            feedback: "Correct! Leave the area and call authorities."
-        )
-    ]
-    
     var body: some View {
         VStack(spacing: 32) {
             // Progress dots
-            ProgressDots(totalSteps: questions.count, currentStep: currentQuestionIndex + 1)
+            ProgressDots(totalSteps: quiz.questions.count, currentStep: currentQuestionIndex + 1)
                 .padding(.top)
             
             // Scenario
-            Text(questions[currentQuestionIndex].scenario)
+            Text(quiz.questions[currentQuestionIndex].scenario)
                 .font(.title3)
                 .multilineTextAlignment(.center)
                 .padding()
@@ -60,9 +29,9 @@ struct QuizView: View {
             VStack(spacing: 16) {
                 ForEach(0..<3) { index in
                     AnswerButton(
-                        text: questions[currentQuestionIndex].options[index],
+                        text: quiz.questions[currentQuestionIndex].options[index],
                         isSelected: selectedAnswerIndex == index,
-                        isCorrect: index == questions[currentQuestionIndex].correctIndex,
+                        isCorrect: index == quiz.questions[currentQuestionIndex].correctIndex,
                         showResult: showFeedback,
                         action: { selectAnswer(index) }
                     )
@@ -75,8 +44,8 @@ struct QuizView: View {
             // Feedback
             if showFeedback {
                 FeedbackView(
-                    isCorrect: selectedAnswerIndex == questions[currentQuestionIndex].correctIndex,
-                    feedback: questions[currentQuestionIndex].feedback
+                    isCorrect: selectedAnswerIndex == quiz.questions[currentQuestionIndex].correctIndex,
+                    feedback: quiz.questions[currentQuestionIndex].feedback
                 )
             }
             
@@ -91,7 +60,7 @@ struct QuizView: View {
             }
         }
         .sheet(isPresented: $quizCompleted) {
-            QuizSummaryView(score: correctAnswers, total: questions.count)
+            QuizSummaryView(score: correctAnswers, total: quiz.questions.count)
         }
     }
     
@@ -100,13 +69,13 @@ struct QuizView: View {
         selectedAnswerIndex = index
         showFeedback = true
         
-        if index == questions[currentQuestionIndex].correctIndex {
+        if index == quiz.questions[currentQuestionIndex].correctIndex {
             correctAnswers += 1
         }
     }
     
     private func nextQuestion() {
-        if currentQuestionIndex < questions.count - 1 {
+        if currentQuestionIndex < quiz.questions.count - 1 {
             currentQuestionIndex += 1
             selectedAnswerIndex = nil
             showFeedback = false
@@ -190,6 +159,43 @@ struct QuizSummaryView: View {
 }
 
 #Preview {
-    QuizView()
-        .preferredColorScheme(.dark)
+    QuizView(quiz: Quiz(
+        title: "Basic Earthquake Safety",
+        icon: "🏠",
+        category: "Home Safety",
+        questions: [
+            Question(
+                scenario: "During an earthquake at home, you should",
+                options: [
+                    "Use elevator to evacuate",
+                    "Drop, cover, and hold on",
+                    "Call emergency immediately"
+                ],
+                correctIndex: 1,
+                feedback: "Right! Drop, cover, hold is the safest response."
+            ),
+            Question(
+                scenario: "You're in a mall during a quake",
+                options: [
+                    "Hide under a counter",
+                    "Run to the exit",
+                    "Stand near windows"
+                ],
+                correctIndex: 0,
+                feedback: "Correct! Stay low and protected."
+            ),
+            Question(
+                scenario: "After an earthquake, you notice gas smell",
+                options: [
+                    "Light a match to check",
+                    "Turn on ventilation",
+                    "Exit immediately"
+                ],
+                correctIndex: 2,
+                feedback: "Correct! Leave the area and call authorities."
+            )
+        ],
+        completion: 0.0
+    ))
+    .preferredColorScheme(.dark)
 }
