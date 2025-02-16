@@ -1,19 +1,19 @@
 import SwiftUI
 
 struct DrillSimulatorView: View {
-    // MARK: - Properties
+    let drill: Drill
+    
     @State private var currentStep = 1
-    @State private var timeRemaining = 10
+    @State private var timeRemaining: Int
     @State private var isTimerRunning = false
     @State private var showSummary = false
-    @State private var drillAccuracy: Double = 0.9 // Mock accuracy
+    @State private var drillAccuracy: Double = 0.9
     @State private var totalTimeTaken = 0
     
-    private let steps = [
-        "Drop to the ground",
-        "Cover your head",
-        "Hold on"
-    ]
+    init(drill: Drill) {
+        self.drill = drill
+        _timeRemaining = State(initialValue: drill.duration)
+    }
     
     // MARK: - Body
     var body: some View {
@@ -43,10 +43,10 @@ struct DrillSimulatorView: View {
             // Step Progress
             ProgressView(value: 0.7)
                 .frame(height: 200)
-                .accessibilityLabel(steps[currentStep - 1])
+                .accessibilityLabel(drill.steps[currentStep - 1])
             
             // Step text
-            Text("Step \(currentStep): \(steps[currentStep - 1])")
+            Text("Step \(currentStep): \(drill.steps[currentStep - 1])")
                 .font(.title2.bold())
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)

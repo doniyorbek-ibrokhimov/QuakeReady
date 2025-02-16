@@ -41,7 +41,7 @@ struct ContentView: View {
                 .tag(0)
             
             // Drill Tab
-            DrillSimulatorView()
+            DrillLibraryView()
                 .tabItem {
                     Label("Drill", systemImage: "figure.run")
                 }
