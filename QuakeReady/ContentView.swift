@@ -48,14 +48,14 @@ struct ContentView: View {
                 .tag(1)
             
             // Quiz Tab
-            Text("Quiz Coming Soon")
+            QuizView()
                 .tabItem {
                     Label("Quiz", systemImage: "questionmark.circle.fill")
                 }
                 .tag(2)
             
             // Badge Gallery Tab
-            Text("Badge Gallery Coming Soon")
+            BadgeGalleryView()
                 .tabItem {
                     Label("Badges", systemImage: "medal.fill")
                 }
@@ -64,59 +64,58 @@ struct ContentView: View {
     }
     
     private var homeView: some View {
-        ZStack {
-            Color.black
-                .ignoresSafeArea()
-            
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Global Risks Section
-                    VStack(spacing: 16) {
-                        HStack {
-                            Label("Global Earthquake Risks", systemImage: "globe")
-                                .font(.title2.bold())
-                            Spacer()
+        VStack(spacing: 24) {
+            // Global Risks Section
+            VStack(alignment: .leading, spacing: 16) {
+                Label("Global Earthquake Risks", systemImage: "globe")
+                    .font(.title2.bold())
+                    .padding(.horizontal)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHGrid(rows: [
+                        GridItem(.flexible())
+                    ], spacing: 16) {
+                        ForEach(countries) { country in
+                            CountryCard(country: country)
+                                .frame(width: 200)
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("\(country.name) earthquake risk data")
                         }
-                        .padding(.horizontal)
-                        
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            ForEach(countries) { country in
-                                CountryCard(country: country)
-                                    .accessibilityElement(children: .combine)
-                                    .accessibilityLabel("\(country.name) earthquake risk data")
-                            }
-                        }
-                        .padding(.horizontal)
                     }
-                    
-                    // Nearby Risks Section
-                    VStack(spacing: 16) {
-                        HStack {
-                            Label("Nearby Earthquake Risks", systemImage: "location.circle.fill")
-                                .font(.title2.bold())
-                            Spacer()
-                        }
-                        .padding(.horizontal)
-                        
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            ForEach(nearbyCountries) { country in
-                                CountryCard(country: country)
-                                    .accessibilityElement(children: .combine)
-                                    .accessibilityLabel("\(country.name) earthquake risk data")
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
+                    .padding(.horizontal)
                 }
-                .padding(.vertical, 24)
             }
-            .foregroundColor(.white)
+            
+            // Nearby Risks Section
+            VStack(alignment: .leading, spacing: 16) {
+                Label("Nearby Earthquake Risks", systemImage: "location.circle.fill")
+                    .font(.title2.bold())
+                    .padding(.horizontal)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHGrid(rows: [
+                        GridItem(.flexible())
+                    ], spacing: 16) {
+                        ForEach(nearbyCountries) { country in
+                            CountryCard(country: country)
+                                .frame(width: 200)
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("\(country.name) earthquake risk data")
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            }
+
+            Spacer()
         }
+        .padding(.vertical, 24)
+        .foregroundColor(.white)
     }
 }
 
 struct CountryCard: View {
-
+    
     let country: Country
     
     var body: some View {
