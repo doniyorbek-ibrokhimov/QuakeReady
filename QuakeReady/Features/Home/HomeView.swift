@@ -73,8 +73,6 @@ struct HomeView: View {
                         ForEach(countries) { country in
                             CountryCard(country: country)
                                 .frame(width: 200)
-                                .accessibilityElement(children: .combine)
-                                .accessibilityLabel("\(country.name) earthquake risk data")
                         }
                     }
                     .padding(.horizontal)
@@ -94,8 +92,6 @@ struct HomeView: View {
                         ForEach(nearbyCountries) { country in
                             CountryCard(country: country)
                                 .frame(width: 200)
-                                .accessibilityElement(children: .combine)
-                                .accessibilityLabel("\(country.name) earthquake risk data")
                         }
                     }
                     .padding(.horizontal)
