@@ -1,37 +1,58 @@
 import SwiftUI
 
+enum BadgeStatus: Equatable {
+    case earned(date: Date)
+    case locked(criteria: String)
+    
+    var isEarned: Bool {
+        if case .earned = self { return true }
+        return false
+    }
+}
+
+struct Badge: Identifiable {
+    let id = UUID()
+    let title: String
+    let icon: String
+    let status: BadgeStatus
+    let description: String
+}
+
 struct BadgeGalleryView: View {
     @State private var showingToast = false
     @State private var toastMessage = ""
+    @State private var selectedFilter: BadgeFilter = .all
+    @State private var selectedBadge: Badge?
+    @State private var showingBadgeDetails = false
+    
+    enum BadgeFilter {
+        case all, earned, locked
+    }
     
     private let badges = [
         Badge(
             title: "Quick Learner",
             icon: "bolt.fill",
-            criteria: "Finish 1 Quiz",
-            earned: true,
-            earnedDate: "March 5, 2024"
+            status: .earned(date: Date()),
+            description: "Awarded for completing your first quiz"
         ),
         Badge(
             title: "Drill Master",
             icon: "figure.run",
-            criteria: "Complete 3 Drills",
-            earned: true,
-            earnedDate: "March 6, 2024"
+            status: .earned(date: Date().addingTimeInterval(-86400)),
+            description: "Completed 3 earthquake drills"
         ),
         Badge(
             title: "Safety Scholar",
             icon: "book.closed.fill",
-            criteria: "Score 100% on 5 Quizzes",
-            earned: false,
-            earnedDate: nil
+            status: .locked(criteria: "Score 100% on 5 Quizzes"),
+            description: "Become a safety expert"
         ),
         Badge(
             title: "Global Guardian",
             icon: "globe",
-            criteria: "View 10 Countries",
-            earned: false,
-            earnedDate: nil
+            status: .locked(criteria: "View 10 Countries"),
+            description: "Explore earthquake risks worldwide"
         )
     ]
     
@@ -42,45 +63,98 @@ struct BadgeGalleryView: View {
     ]
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                // Header
-                Text("Your Achievements: \(earnedBadgesCount)/\(badges.count) Badges Unlocked")
-                    .font(.title3)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                
-                // Badge Grid
-                LazyVGrid(columns: columns, spacing: 12) {
-                    ForEach(badges) { badge in
-                        BadgeCard(badge: badge)
-                            .opacity(badge.earned ? 1 : 0.4)
-                            .onTapGesture {
-                                handleBadgeTap(badge)
-                            }
+        ZStack {
+            Color.black.ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Header Section
+                    headerSection
+                    
+                    // Filter Tabs
+                    filterTabs
+                    
+                    // Badge Grid
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(filteredBadges) { badge in
+                            BadgeCard(badge: badge)
+                                .onTapGesture {
+                                    handleBadgeTap(badge)
+                                }
+                        }
                     }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
+                .padding(.vertical)
             }
-            .padding(.vertical)
         }
-        .background(Color.black)
         .foregroundColor(.white)
+        .sheet(isPresented: $showingBadgeDetails) {
+            if let badge = selectedBadge {
+                BadgeDetailView(badge: badge)
+            }
+        }
         .overlay(
             ToastView(message: toastMessage, isShowing: $showingToast)
         )
     }
     
+    private var headerSection: some View {
+        VStack(spacing: 16) {
+            Text("Your Achievements")
+                .font(.title.bold())
+            
+            ProgressView(value: Double(earnedBadgesCount), total: Double(badges.count)) {
+                Text("\(earnedBadgesCount)/\(badges.count) Badges Unlocked")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
+            .tint(.blue)
+            .padding(.horizontal)
+        }
+    }
+    
+    private var filterTabs: some View {
+        HStack {
+            ForEach([BadgeFilter.all, .earned, .locked], id: \.self) { filter in
+                Button(action: { selectedFilter = filter }) {
+                    Text(filter.title)
+                        .font(.subheadline)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                        .background(selectedFilter == filter ? Color.blue : Color.gray.opacity(0.2))
+                        .cornerRadius(20)
+                }
+            }
+        }
+    }
+    
+    private var filteredBadges: [Badge] {
+        switch selectedFilter {
+        case .all: return badges
+        case .earned: return badges.filter { $0.status.isEarned }
+        case .locked: return badges.filter { !$0.status.isEarned }
+        }
+    }
+    
     private var earnedBadgesCount: Int {
-        badges.filter { $0.earned }.count
+        badges.filter { $0.status.isEarned }.count
     }
     
     private func handleBadgeTap(_ badge: Badge) {
-        if badge.earned {
+        selectedBadge = badge
+        
+        switch badge.status {
+        case .earned(let date):
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            toastMessage = "Earned on \(formatter.string(from: date))"
             let generator = UIImpactFeedbackGenerator(style: .light)
             generator.impactOccurred()
-        } else {
-            toastMessage = "Locked: \(badge.criteria)"
+            showingBadgeDetails = true
+            
+        case .locked(let criteria):
+            toastMessage = "Locked: \(criteria)"
             showingToast = true
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -90,45 +164,13 @@ struct BadgeGalleryView: View {
     }
 }
 
-// FIXME: make this an enum as all badges will be predefined
-struct Badge: Identifiable {
-    let id = UUID()
-    let title: String
-    let icon: String
-    let criteria: String
-    let earned: Bool
-    let earnedDate: String?
-}
-
-struct BadgeCard: View {
-    let badge: Badge
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: badge.icon)
-                .font(.system(size: 32))
-                .foregroundColor(badge.earned ? .yellow : .gray)
-            
-            Text(badge.title)
-                .font(.caption)
-                .fontWeight(.medium)
-                .multilineTextAlignment(.center)
-            
-            if badge.earned {
-                Text("Earned: \(badge.earnedDate!)")
-                    .font(.caption2)
-                    .foregroundColor(.gray)
-            } else {
-                Text(badge.criteria)
-                    .font(.caption2)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-            }
+extension BadgeGalleryView.BadgeFilter {
+    var title: String {
+        switch self {
+        case .all: return "All"
+        case .earned: return "Earned"
+        case .locked: return "Locked"
         }
-        .padding(12)
-        .frame(maxWidth: .infinity)
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(12)
     }
 }
 

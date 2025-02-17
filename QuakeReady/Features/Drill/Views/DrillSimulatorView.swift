@@ -1,4 +1,6 @@
 import SwiftUI
+import CoreHaptics
+import AVFoundation
 
 extension DrillLibraryView {
     struct DrillSimulatorView: View {
@@ -10,69 +12,76 @@ extension DrillLibraryView {
         @State private var showSummary = false
         @State private var drillAccuracy: Double = 0.9
         @State private var totalTimeTaken = 0
+        @State private var hapticEngine: CHHapticEngine?
+        @State private var shakeIntensity: Double = 0.0
+        @State private var audioPlayer: AVAudioPlayer?
+        
+        // Environment background states
+        @State private var showDebris = false
+        @State private var environmentOpacity = 0.0
         
         init(drill: Drill) {
             self.drill = drill
             _timeRemaining = State(initialValue: drill.duration)
+            prepareHaptics()
+            loadAudioEffects()
         }
         
-        // MARK: - Body
         var body: some View {
-            VStack(spacing: 32) {
-                // Progress dots
-                ProgressDots(totalSteps: 3, currentStep: currentStep)
-                    .padding(.top)
+            ZStack {
+                // Environment Layer
+                EnvironmentView(drill: drill, intensity: shakeIntensity)
+                    .opacity(environmentOpacity)
                 
-                // Timer
-                ZStack {
-                    Circle()
-                        .stroke(lineWidth: 4)
-                        .opacity(0.3)
-                        .foregroundColor(.blue)
+                // Main Content
+                VStack(spacing: 32) {
+                    // Intensity Meter
+                    IntensityMeter(value: shakeIntensity)
+                        .frame(width: 120, height: 120)
                     
-                    Circle()
-                        .trim(from: 0, to: CGFloat(timeRemaining) / 10)
-                        .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
-                        .foregroundColor(.blue)
-                        .rotationEffect(.degrees(-90))
+                    // Interactive Character
+                    CharacterView(step: currentStep)
+                        .frame(height: 200)
                     
-                    Text("\(timeRemaining)")
-                        .font(.system(size: 36, weight: .medium, design: .monospaced))
+                    // Step Instructions
+                    InstructionCard(
+                        step: currentStep,
+                        text: drill.steps[currentStep - 1],
+                        timeRemaining: timeRemaining
+                    )
+                    
+                    // Action Button
+                    ActionButton(
+                        currentStep: currentStep,
+                        action: nextStep
+                    )
                 }
-                .frame(width: 100, height: 100)
-                
-                // Step Progress
-                ProgressView(value: 0.7)
-                    .frame(height: 200)
-                    .accessibilityLabel(drill.steps[currentStep - 1])
-                
-                // Step text
-                Text("Step \(currentStep): \(drill.steps[currentStep - 1])")
-                    .font(.title2.bold())
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                
-                // Next button
-                Button(action: nextStep) {
-                    Text(currentStep == 3 ? "Finish" : "Next Step")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(12)
-                }
-                .padding(.horizontal)
-                
-                Spacer()
+                .padding()
             }
-            .onAppear(perform: startTimer)
+            .onAppear {
+                startSimulation()
+            }
+            .onChange(of: timeRemaining) { _ in
+                updateIntensity()
+            }
             .sheet(isPresented: $showSummary) {
                 DrillSummaryView(accuracy: drillAccuracy, timeTaken: totalTimeTaken)
             }
         }
         
-        // MARK: - Methods
+        private func startSimulation() {
+            startTimer()
+            animateEnvironment()
+            playBackgroundAudio()
+        }
+        
+        private func updateIntensity() {
+            withAnimation(.easeInOut(duration: 1)) {
+                shakeIntensity = Double(timeRemaining) / Double(drill.duration)
+            }
+            triggerHapticFeedback()
+        }
+        
         private func startTimer() {
             isTimerRunning = true
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
@@ -97,6 +106,68 @@ extension DrillLibraryView {
                 isTimerRunning = false
                 showSummary = true
             }
+        }
+        
+        private func animateEnvironment() {
+            withAnimation(.easeIn(duration: 0.5)) {
+                environmentOpacity = 1.0
+            }
+            
+            withAnimation(.easeInOut(duration: 2.0).repeatForever()) {
+                showDebris = true
+            }
+        }
+        
+        private func prepareHaptics() {
+            guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
+            
+            do {
+                hapticEngine = try CHHapticEngine()
+                try hapticEngine?.start()
+            } catch {
+                print("Haptic engine creation error: \(error)")
+            }
+        }
+        
+        private func triggerHapticFeedback() {
+            guard CHHapticEngine.capabilitiesForHardware().supportsHaptics,
+                  let engine = hapticEngine else { return }
+            
+            let intensity = CHHapticEventParameter(parameterID: .hapticIntensity,
+                                                 value: Float(shakeIntensity))
+            let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness,
+                                                 value: Float(shakeIntensity))
+            
+            let event = CHHapticEvent(eventType: .hapticContinuous,
+                                    parameters: [intensity, sharpness],
+                                    relativeTime: 0,
+                                    duration: 0.5)
+            
+            do {
+                let pattern = try CHHapticPattern(events: [event], parameters: [])
+                let player = try engine.makePlayer(with: pattern)
+                try player.start(atTime: 0)
+            } catch {
+                print("Failed to play pattern: \(error)")
+            }
+        }
+        
+        private func loadAudioEffects() {
+            guard let url = Bundle.main.url(forResource: "earthquake_rumble",
+                                          withExtension: "mp3") else { return }
+            
+            do {
+                audioPlayer = try AVAudioPlayer(contentsOf: url)
+                audioPlayer?.prepareToPlay()
+            } catch {
+                print("Failed to load audio: \(error)")
+            }
+        }
+        
+        private func playBackgroundAudio() {
+            audioPlayer?.setVolume(0, fadeDuration: 0)
+            audioPlayer?.play()
+            audioPlayer?.setVolume(Float(shakeIntensity), fadeDuration: 1.0)
         }
     }
 }
