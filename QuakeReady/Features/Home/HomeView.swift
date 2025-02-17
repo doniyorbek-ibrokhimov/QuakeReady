@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var selectedTab = 0
+    @State private var showingQuickDrill = false
     
     // Mock data for global risks
     private let countries: [Country] = [
@@ -28,8 +29,7 @@ struct HomeView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            // Home Tab
-            homeView
+            mainView
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
@@ -58,50 +58,112 @@ struct HomeView: View {
         }
     }
     
-    private var homeView: some View {
-        VStack(spacing: 24) {
-            // Global Risks Section
-            VStack(alignment: .leading, spacing: 16) {
-                Label("Global Earthquake Risks", systemImage: "globe")
-                    .font(.title2.bold())
-                    .padding(.horizontal)
+    private var mainView: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                // Quick Actions Section
+                quickActionsSection
                 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHGrid(rows: [
-                        GridItem(.flexible())
-                    ], spacing: 16) {
-                        ForEach(countries) { country in
-                            CountryCard(country: country)
-                                .frame(width: 200)
-                        }
-                    }
-                    .padding(.horizontal)
-                }
-            }
-            
-            // Nearby Risks Section
-            VStack(alignment: .leading, spacing: 16) {
-                Label("Nearby Earthquake Risks", systemImage: "location.circle.fill")
-                    .font(.title2.bold())
-                    .padding(.horizontal)
+                // Progress Overview
+                progressSection
                 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHGrid(rows: [
-                        GridItem(.flexible())
-                    ], spacing: 16) {
-                        ForEach(nearbyCountries) { country in
-                            CountryCard(country: country)
-                                .frame(width: 200)
-                        }
-                    }
-                    .padding(.horizontal)
-                }
+                // Risk Assessment Sections
+                riskAssessmentSection
             }
-
-            Spacer()
+            .padding(.vertical, 24)
         }
-        .padding(.vertical, 24)
+        .background(Color.black)
         .foregroundColor(.white)
+        .sheet(isPresented: $showingQuickDrill) {
+            DrillLibraryView()
+        }
+    }
+    
+    private var quickActionsSection: some View {
+        VStack(spacing: 16) {
+            Text("Quick Actions")
+                .font(.title2.bold())
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+            
+            HStack(spacing: 16) {
+                QuickActionButton(
+                    title: "Start Drill",
+                    icon: "figure.run",
+                    color: .blue
+                ) {
+                    showingQuickDrill = true
+                }
+                
+                QuickActionButton(
+                    title: "Take Quiz",
+                    icon: "questionmark.circle.fill",
+                    color: .purple
+                ) {
+                    selectedTab = 2
+                }
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    private var progressSection: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Text("Your Progress")
+                    .font(.title2.bold())
+                Spacer()
+                Button("View All") {
+                    selectedTab = 3
+                }
+                .foregroundColor(.blue)
+            }
+            .padding(.horizontal)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    ProgressCard(
+                        title: "Drills",
+                        icon: "figure.run",
+                        progress: 0.7,
+                        detail: "7/10 Complete"
+                    )
+                    
+                    ProgressCard(
+                        title: "Quizzes",
+                        icon: "brain",
+                        progress: 0.4,
+                        detail: "4/10 Complete"
+                    )
+                    
+                    ProgressCard(
+                        title: "Badges",
+                        icon: "medal.fill",
+                        progress: 0.3,
+                        detail: "3/10 Earned"
+                    )
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
+    
+    private var riskAssessmentSection: some View {
+        VStack(spacing: 24) {
+            // Global Risks
+            RiskSection(
+                title: "Global Earthquake Risks",
+                icon: "globe",
+                countries: countries
+            )
+            
+            // Nearby Risks
+            RiskSection(
+                title: "Nearby Earthquake Risks",
+                icon: "location.circle.fill",
+                countries: nearbyCountries
+            )
+        }
     }
 }
 
@@ -153,6 +215,88 @@ struct Country: Identifiable {
     let frequency: String
     let damages: String
     let injuries: String
+}
+
+// Supporting Views
+struct QuickActionButton: View {
+    let title: String
+    let icon: String
+    let color: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 24))
+                Text(title)
+                    .font(.subheadline.bold())
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(color.opacity(0.2))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(color.opacity(0.5), lineWidth: 1)
+            )
+        }
+        .foregroundColor(color)
+        .buttonStyle(ScaleButtonStyle())
+    }
+}
+
+struct ProgressCard: View {
+    let title: String
+    let icon: String
+    let progress: Double
+    let detail: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.title2)
+                Text(title)
+                    .font(.headline)
+            }
+            
+            ProgressView(value: progress)
+                .tint(.blue)
+            
+            Text(detail)
+                .font(.subheadline)
+                .foregroundColor(.gray)
+        }
+        .padding()
+        .frame(width: 160)
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(12)
+    }
+}
+
+struct RiskSection: View {
+    let title: String
+    let icon: String
+    let countries: [Country]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Label(title, systemImage: icon)
+                .font(.title2.bold())
+                .padding(.horizontal)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHGrid(rows: [GridItem(.flexible())], spacing: 16) {
+                    ForEach(countries) { country in
+                        CountryCard(country: country)
+                            .frame(width: 200)
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
 }
 
 #Preview {
