@@ -9,7 +9,6 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var selectedTab = 0
-    @State private var showingQuickDrill = false
     
     // Mock data for global risks
     private let countries: [Country] = [
@@ -74,9 +73,6 @@ struct HomeView: View {
         }
         .background(Color.black)
         .foregroundColor(.white)
-        .sheet(isPresented: $showingQuickDrill) {
-            DrillLibraryView()
-        }
     }
     
     private var quickActionsSection: some View {
@@ -92,7 +88,7 @@ struct HomeView: View {
                     icon: "figure.run",
                     color: .blue
                 ) {
-                    showingQuickDrill = true
+                    selectedTab = 1
                 }
                 
                 QuickActionButton(
