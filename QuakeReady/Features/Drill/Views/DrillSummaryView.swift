@@ -12,6 +12,8 @@ extension DrillLibraryView {
         let accuracy: Double
         let timeTaken: Int
         
+        @Environment(\.dismiss) private var dismiss
+        
         var body: some View {
             VStack(spacing: 24) {
                 Text("Drill Complete! 🎉")
@@ -26,6 +28,13 @@ extension DrillLibraryView {
                 Text("Drilliant Badge Earned! 🏅")
                     .font(.headline)
                     .foregroundColor(.blue)
+                
+                Spacer()
+                
+                Button("Back to Library") {
+                    dismiss()
+                }
+                .buttonStyle(.primary)
             }
             .padding()
         }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Drill: Identifiable {
+struct Drill: Identifiable, Hashable {
     let id = UUID()
     let type: DrillType
     //FIXME: make it a computed property and get title from `type`

@@ -17,7 +17,6 @@ extension DrillLibraryView {
         @State private var audioPlayer: AVAudioPlayer?
         
         // Environment background states
-        @State private var showDebris = false
         @State private var environmentOpacity = 0.0
         
         init(drill: Drill) {
@@ -28,10 +27,26 @@ extension DrillLibraryView {
         }
         
         var body: some View {
+            NavigationStack {
+                content
+                    .animation(.easeInOut, value: currentStep)
+                    .navigationDestination(isPresented: $showSummary) {
+                        DrillSummaryView(accuracy: drillAccuracy, timeTaken: totalTimeTaken)
+                    }
+            }
+            .onAppear {
+                startSimulation()
+            }
+            .onChange(of: timeRemaining) { _ in
+                updateIntensity()
+            }
+        }
+        
+        private var content: some View {
             ZStack {
                 // Environment Layer
-                EnvironmentView(drill: drill, intensity: shakeIntensity)
-                    .opacity(environmentOpacity)
+//                EnvironmentView(drill: drill, intensity: shakeIntensity)
+//                    .opacity(environmentOpacity)
                 
                 // Main Content
                 VStack(spacing: 32) {
@@ -40,8 +55,8 @@ extension DrillLibraryView {
                         .frame(width: 120, height: 120)
                     
                     // Interactive Character
-                    CharacterView(step: currentStep)
-                        .frame(height: 200)
+//                    CharacterView(step: currentStep)
+//                        .frame(height: 200)
                     
                     // Step Instructions
                     InstructionCard(
@@ -50,22 +65,25 @@ extension DrillLibraryView {
                         timeRemaining: timeRemaining
                     )
                     
+                    Spacer()
+                    
                     // Action Button
-                    ActionButton(
-                        currentStep: currentStep,
-                        action: nextStep
-                    )
+                    HStack {
+                        
+                        if currentStep > 1 {
+                            Button("Previous Step") {
+                                prevStep()
+                            }
+                            .buttonStyle(.secondary)
+                        }
+                        
+                        ActionButton(
+                            currentStep: currentStep,
+                            action: nextStep
+                        )
+                    }
                 }
                 .padding()
-            }
-            .onAppear {
-                startSimulation()
-            }
-            .onChange(of: timeRemaining) { _ in
-                updateIntensity()
-            }
-            .sheet(isPresented: $showSummary) {
-                DrillSummaryView(accuracy: drillAccuracy, timeTaken: totalTimeTaken)
             }
         }
         
@@ -108,13 +126,22 @@ extension DrillLibraryView {
             }
         }
         
+        private func prevStep() {
+            let generator = UIImpactFeedbackGenerator(style: .medium)
+            generator.impactOccurred()
+            
+            if currentStep > 0 {
+                currentStep -= 1
+                timeRemaining = 10
+                startTimer()
+            } else {
+                isTimerRunning = false
+            }
+        }
+        
         private func animateEnvironment() {
             withAnimation(.easeIn(duration: 0.5)) {
                 environmentOpacity = 1.0
-            }
-            
-            withAnimation(.easeInOut(duration: 2.0).repeatForever()) {
-                showDebris = true
             }
         }
         
