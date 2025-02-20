@@ -14,47 +14,16 @@ struct Badge: Identifiable {
     let id = UUID()
     let title: String
     let icon: String
-    let status: BadgeStatus
+    var status: BadgeStatus
     let description: String
 }
 
 struct BadgeGalleryView: View {
-    @State private var showingToast = false
-    @State private var toastMessage = ""
-    @State private var selectedFilter: BadgeFilter = .all
-    @State private var selectedBadge: Badge?
-    @State private var showingBadgeDetails = false
+    @StateObject private var viewModel = ViewModel()
     
     enum BadgeFilter {
         case all, earned, locked
     }
-    
-    private let badges = [
-        Badge(
-            title: "Quick Learner",
-            icon: "bolt.fill",
-            status: .earned(date: Date()),
-            description: "Awarded for completing your first quiz"
-        ),
-        Badge(
-            title: "Drill Master",
-            icon: "figure.run",
-            status: .earned(date: Date().addingTimeInterval(-86400)),
-            description: "Completed 3 earthquake drills"
-        ),
-        Badge(
-            title: "Safety Scholar",
-            icon: "book.closed.fill",
-            status: .locked(criteria: "Score 100% on 5 Quizzes"),
-            description: "Become a safety expert"
-        ),
-        Badge(
-            title: "Global Guardian",
-            icon: "globe",
-            status: .locked(criteria: "View 10 Countries"),
-            description: "Explore earthquake risks worldwide"
-        )
-    ]
     
     private let columns = [
         GridItem(.flexible()),
@@ -76,10 +45,10 @@ struct BadgeGalleryView: View {
                     
                     // Badge Grid
                     LazyVGrid(columns: columns, spacing: 12) {
-                        ForEach(filteredBadges) { badge in
+                        ForEach(viewModel.filteredBadges) { badge in
                             BadgeCard(badge: badge)
                                 .onTapGesture {
-                                    handleBadgeTap(badge)
+                                    viewModel.handleBadgeTap(badge)
                                 }
                         }
                     }
@@ -89,13 +58,13 @@ struct BadgeGalleryView: View {
             }
         }
         .foregroundColor(.white)
-        .sheet(isPresented: $showingBadgeDetails) {
-            if let badge = selectedBadge {
+        .sheet(isPresented: $viewModel.showingBadgeDetails) {
+            if let badge = viewModel.selectedBadge {
                 BadgeDetailView(badge: badge)
             }
         }
         .overlay(
-            ToastView(message: toastMessage, isShowing: $showingToast)
+            ToastView(message: viewModel.toastMessage, isShowing: $viewModel.showingToast)
         )
     }
     
@@ -104,8 +73,8 @@ struct BadgeGalleryView: View {
             Text("Your Achievements")
                 .font(.title.bold())
             
-            ProgressView(value: Double(earnedBadgesCount), total: Double(badges.count)) {
-                Text("\(earnedBadgesCount)/\(badges.count) Badges Unlocked")
+            ProgressView(value: Double(viewModel.earnedBadgesCount), total: Double(viewModel.badges.count)) {
+                Text("\(viewModel.earnedBadgesCount)/\(viewModel.badges.count) Badges Unlocked")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
@@ -117,48 +86,14 @@ struct BadgeGalleryView: View {
     private var filterTabs: some View {
         HStack {
             ForEach([BadgeFilter.all, .earned, .locked], id: \.self) { filter in
-                Button(action: { selectedFilter = filter }) {
+                Button(action: { viewModel.selectedFilter = filter }) {
                     Text(filter.title)
                         .font(.subheadline)
                         .padding(.vertical, 8)
                         .padding(.horizontal, 16)
-                        .background(selectedFilter == filter ? Color.blue : Color.gray.opacity(0.2))
+                        .background(viewModel.selectedFilter == filter ? Color.blue : Color.gray.opacity(0.2))
                         .cornerRadius(20)
                 }
-            }
-        }
-    }
-    
-    private var filteredBadges: [Badge] {
-        switch selectedFilter {
-        case .all: return badges
-        case .earned: return badges.filter { $0.status.isEarned }
-        case .locked: return badges.filter { !$0.status.isEarned }
-        }
-    }
-    
-    private var earnedBadgesCount: Int {
-        badges.filter { $0.status.isEarned }.count
-    }
-    
-    private func handleBadgeTap(_ badge: Badge) {
-        selectedBadge = badge
-        
-        switch badge.status {
-        case .earned(let date):
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            toastMessage = "Earned on \(formatter.string(from: date))"
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.impactOccurred()
-            showingBadgeDetails = true
-            
-        case .locked(let criteria):
-            toastMessage = "Locked: \(criteria)"
-            showingToast = true
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                showingToast = false
             }
         }
     }
