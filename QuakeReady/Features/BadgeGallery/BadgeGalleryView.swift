@@ -10,17 +10,83 @@ enum BadgeStatus: Equatable {
     }
 }
 
+enum BadgeType: String, CaseIterable {
+    case quickLearner
+    case drillMaster 
+    case safetyScholar
+    case globalGuardian
+    
+    var title: String {
+        switch self {
+        case .quickLearner: return "Quick Learner"
+        case .drillMaster: return "Drill Master"
+        case .safetyScholar: return "Safety Scholar"
+        case .globalGuardian: return "Global Guardian"
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .quickLearner: return "bolt.fill"
+        case .drillMaster: return "figure.run"
+        case .safetyScholar: return "book.closed.fill"
+        case .globalGuardian: return "globe"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .quickLearner: return "Awarded for completing your first quiz"
+        case .drillMaster: return "Completed 3 earthquake drills"
+        case .safetyScholar: return "Become a safety expert"
+        case .globalGuardian: return "Explore earthquake risks worldwide"
+        }
+    }
+    
+    var criteria: String {
+        switch self {
+        case .quickLearner: return "Score 100% on 5 Quizzes"
+        case .drillMaster: return "Complete 3 earthquake drills"
+        case .safetyScholar: return "Score 100% on all quizzes"
+        case .globalGuardian: return "View 10 Countries"
+        }
+    }
+}
+
+//enum Badge {
+//    case quickLearner, drillMaster, safetyScholar, globalGuardian
+//    
+//    var title: String {
+//        switch self {
+//        case .quickLearner: return "Quick Learner"
+//        case .drillMaster: return "Drill Master"
+//        case .safetyScholar: return "Safety Scholar"
+//        case .globalGuardian: return "Global Guardian"
+//        }
+//    
+//        var icon: String {
+//            switch self {
+//            case .quickLearner: return "bolt.fill"
+//            case .drillMaster: return "figure.run"
+//            case .safetyScholar: return "book.closed.fill"
+//            case .globalGuardian: return "globe"
+//            }
+//        }
+//}
+
 struct Badge: Identifiable {
     let id = UUID()
-    let title: String
-    let icon: String
+    let type: BadgeType
     var status: BadgeStatus
-    let description: String
+    
+    var title: String { type.title }
+    var icon: String { type.icon }
+    var description: String { type.description }
 }
 
 struct BadgeGalleryView: View {
-    @StateObject private var viewModel = ViewModel()
-    
+    @EnvironmentObject private var viewModel: ViewModel
+
     enum BadgeFilter {
         case all, earned, locked
     }
@@ -131,4 +197,23 @@ struct ToastView: View {
 #Preview {
     BadgeGalleryView()
         .preferredColorScheme(.dark)
+}
+
+class BadgeProgress: ObservableObject {
+    @Published private var earnedBadges: [BadgeType: Date] = [:]
+    
+    func isEarned(_ type: BadgeType) -> Bool {
+        earnedBadges[type] != nil
+    }
+    
+    func earnBadge(_ type: BadgeType) {
+        earnedBadges[type] = Date()
+    }
+    
+    func getBadgeStatus(_ type: BadgeType) -> BadgeStatus {
+        if let date = earnedBadges[type] {
+            return .earned(date: date)
+        }
+        return .locked(criteria: type.criteria)
+    }
 }

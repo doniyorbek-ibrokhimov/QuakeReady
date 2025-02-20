@@ -9,6 +9,8 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var selectedTab = 0
+    @StateObject private var badgeGalleryVM = BadgeGalleryView.ViewModel()
+
     
     // Mock data for global risks
     private let countries: [Country] = [
@@ -55,6 +57,7 @@ struct HomeView: View {
                 }
                 .tag(3)
         }
+        .environmentObject(badgeGalleryVM)
     }
     
     private var mainView: some View {

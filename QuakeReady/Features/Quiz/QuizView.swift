@@ -1,26 +1,22 @@
 import SwiftUI
 
 struct QuizView: View {
-    let quiz: Quiz
+    @StateObject private var viewModel: ViewModel
+    @EnvironmentObject private var quizLibraryViewModel: QuizLibraryView.ViewModel
     
-    @State private var currentQuestionIndex = 0
-    @State private var selectedAnswerIndex: Int?
-    @State private var showFeedback = false
-    @State private var quizCompleted = false
-    @State private var correctAnswers = 0
-    
-    private var isLastQuestion: Bool {
-        currentQuestionIndex == quiz.questions.count - 1
+    //FIXME: get badgeProgress from BadgeGalleryView.ViewModel environment object
+    init(quiz: Quiz, badgeProgress: BadgeProgress) {
+        _viewModel = StateObject(wrappedValue: ViewModel(quiz: quiz, badgeProgress: badgeProgress))
     }
     
     var body: some View {
         VStack(spacing: 32) {
             // Progress dots
-            ProgressDots(totalSteps: quiz.questions.count, currentStep: currentQuestionIndex + 1)
+            ProgressDots(totalSteps: viewModel.quiz.questions.count, currentStep: viewModel.currentQuestionIndex + 1)
                 .padding(.top)
             
             // Scenario
-            Text(quiz.questions[currentQuestionIndex].scenario)
+            Text(viewModel.quiz.questions[viewModel.currentQuestionIndex].scenario)
                 .font(.title3)
                 .multilineTextAlignment(.center)
                 .padding()
@@ -33,11 +29,11 @@ struct QuizView: View {
             VStack(spacing: 16) {
                 ForEach(0..<3) { index in
                     AnswerButton(
-                        text: quiz.questions[currentQuestionIndex].options[index],
-                        isSelected: selectedAnswerIndex == index,
-                        isCorrect: index == quiz.questions[currentQuestionIndex].correctIndex,
-                        showResult: showFeedback,
-                        action: { selectAnswer(index) }
+                        text: viewModel.quiz.questions[viewModel.currentQuestionIndex].options[index],
+                        isSelected: viewModel.selectedAnswerIndex == index,
+                        isCorrect: index == viewModel.quiz.questions[viewModel.currentQuestionIndex].correctIndex,
+                        showResult: viewModel.showFeedback,
+                        action: { viewModel.selectAnswer(index) }
                     )
                 }
             }
@@ -46,59 +42,30 @@ struct QuizView: View {
             Spacer()
             
             // Feedback
-            if showFeedback {
+            if viewModel.showFeedback {
                 FeedbackView(
-                    isCorrect: selectedAnswerIndex == quiz.questions[currentQuestionIndex].correctIndex,
-                    feedback: quiz.questions[currentQuestionIndex].feedback
+                    isCorrect: viewModel.selectedAnswerIndex == viewModel.quiz.questions[viewModel.currentQuestionIndex].correctIndex,
+                    feedback: viewModel.quiz.questions[viewModel.currentQuestionIndex].feedback
                 )
             }
             
             HStack {
-                if currentQuestionIndex > 0 {
-                    Button(action: prevQuestion) {
+                if viewModel.currentQuestionIndex > 0 {
+                    Button(action: viewModel.prevQuestion) {
                         Text("Previous")
                     }
                     .buttonStyle(.secondary)
                 }
                 
-                Button(action: nextQuestion) {
-                    Text(isLastQuestion ? "Complete Quiz" : "Next Question")
+                Button(action: viewModel.nextQuestion) {
+                    Text(viewModel.isLastQuestion ? "Complete Quiz" : "Next Question")
                 }
-                //FIXME: add disabled parameter
-                .buttonStyle(.primary(isDisabled: selectedAnswerIndex == nil))
+                .buttonStyle(.primary(isDisabled: viewModel.selectedAnswerIndex == nil))
             }
         }
-        .animation(.easeInOut, value: currentQuestionIndex)
-        .navigationDestination(isPresented: $quizCompleted) {
-            QuizSummaryView(score: correctAnswers, total: quiz.questions.count)
-        }
-    }
-    
-    private func selectAnswer(_ index: Int) {
-        guard !showFeedback else { return }
-        selectedAnswerIndex = index
-        showFeedback = true
-        
-        if index == quiz.questions[currentQuestionIndex].correctIndex {
-            correctAnswers += 1
-        }
-    }
-    
-    private func nextQuestion() {
-        if currentQuestionIndex < quiz.questions.count - 1 {
-            currentQuestionIndex += 1
-            selectedAnswerIndex = nil
-            showFeedback = false
-        } else {
-            quizCompleted = true
-        }
-    }
-    
-    private func prevQuestion() {
-        if currentQuestionIndex > 0 {
-            currentQuestionIndex -= 1
-            selectedAnswerIndex = nil
-            showFeedback = false
+        .animation(.easeInOut, value: viewModel.currentQuestionIndex)
+        .navigationDestination(isPresented: $viewModel.quizCompleted) {
+            QuizSummaryView(score: viewModel.correctAnswers, total: viewModel.quiz.questions.count)
         }
     }
 }
@@ -185,46 +152,4 @@ struct QuizSummaryView: View {
         }
         .padding()
     }
-}
-
-#Preview {
-    QuizView(quiz: Quiz(
-        title: "Basic Earthquake Safety",
-        icon: "🏠",
-        category: "Home Safety",
-        questions: [
-            Question(
-                scenario: "During an earthquake at home, you should",
-                options: [
-                    "Use elevator to evacuate",
-                    "Drop, cover, and hold on",
-                    "Call emergency immediately"
-                ],
-                correctIndex: 1,
-                feedback: "Right! Drop, cover, hold is the safest response."
-            ),
-            Question(
-                scenario: "You're in a mall during a quake",
-                options: [
-                    "Hide under a counter",
-                    "Run to the exit",
-                    "Stand near windows"
-                ],
-                correctIndex: 0,
-                feedback: "Correct! Stay low and protected."
-            ),
-            Question(
-                scenario: "After an earthquake, you notice gas smell",
-                options: [
-                    "Light a match to check",
-                    "Turn on ventilation",
-                    "Exit immediately"
-                ],
-                correctIndex: 2,
-                feedback: "Correct! Leave the area and call authorities."
-            )
-        ],
-        completion: 0.0
-    ))
-    .preferredColorScheme(.dark)
 }

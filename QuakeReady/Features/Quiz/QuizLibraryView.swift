@@ -14,14 +14,13 @@ struct Quiz: Identifiable, Hashable {
 //FIXME: save previously selected answers
 struct QuizLibraryView: View {
     @StateObject private var viewModel = ViewModel()
-    
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var badgeViewModel: BadgeGalleryView.ViewModel
     
     var body: some View {
         NavigationStack {
             content
                 .navigationDestination(item: $viewModel.selectedQuiz) { quiz in
-                    QuizView(quiz: quiz)
+                    QuizView(quiz: quiz, badgeProgress: badgeViewModel.badgeProgress)
                         .navigationBarBackButtonHidden()
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {
