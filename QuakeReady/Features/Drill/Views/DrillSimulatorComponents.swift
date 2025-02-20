@@ -236,6 +236,9 @@ struct ActionButton: View {
 
 // MARK: - Primary Button Style
 struct PrimaryButtonStyle: ButtonStyle {
+    let isDisabled: Bool
+    
+    
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.headline)
@@ -247,16 +250,23 @@ struct PrimaryButtonStyle: ButtonStyle {
             .opacity(configuration.isPressed ? 0.8 : 1.0)
             .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
             .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
+            .opacity(isDisabled ? 0.5 : 1.0)
+            .disabled(isDisabled)
+            .allowsHitTesting(!isDisabled)
     }
 }
 
 extension ButtonStyle where Self == PrimaryButtonStyle {
     static var primary: PrimaryButtonStyle {
-        PrimaryButtonStyle()
+        primary()
     }
     
     static var secondary: SecondaryButtonStyle {
         SecondaryButtonStyle()
+    }
+    
+    static func primary(isDisabled: Bool = false) -> PrimaryButtonStyle {
+        PrimaryButtonStyle(isDisabled: isDisabled)
     }
 }
 

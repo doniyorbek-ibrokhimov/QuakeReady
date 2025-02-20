@@ -9,6 +9,10 @@ struct QuizView: View {
     @State private var quizCompleted = false
     @State private var correctAnswers = 0
     
+    private var isLastQuestion: Bool {
+        currentQuestionIndex == quiz.questions.count - 1
+    }
+    
     var body: some View {
         VStack(spacing: 32) {
             // Progress dots
@@ -49,17 +53,23 @@ struct QuizView: View {
                 )
             }
             
-            // Next button
-            if showFeedback && !quizCompleted {
-                Button(action: nextQuestion) {
-                    Text("Next")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
+            HStack {
+                if currentQuestionIndex > 0 {
+                    Button(action: prevQuestion) {
+                        Text("Previous")
+                    }
+                    .buttonStyle(.secondary)
                 }
+                
+                Button(action: nextQuestion) {
+                    Text(isLastQuestion ? "Complete Quiz" : "Next Question")
+                }
+                //FIXME: add disabled parameter
+                .buttonStyle(.primary(isDisabled: selectedAnswerIndex == nil))
             }
         }
-        .sheet(isPresented: $quizCompleted) {
+        .animation(.easeInOut, value: currentQuestionIndex)
+        .navigationDestination(isPresented: $quizCompleted) {
             QuizSummaryView(score: correctAnswers, total: quiz.questions.count)
         }
     }
@@ -83,9 +93,17 @@ struct QuizView: View {
             quizCompleted = true
         }
     }
+    
+    private func prevQuestion() {
+        if currentQuestionIndex > 0 {
+            currentQuestionIndex -= 1
+            selectedAnswerIndex = nil
+            showFeedback = false
+        }
+    }
 }
 
-struct Question {
+struct Question: Hashable {
     let scenario: String
     let options: [String]
     let correctIndex: Int
@@ -141,6 +159,9 @@ struct QuizSummaryView: View {
     let score: Int
     let total: Int
     
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var viewModel: QuizLibraryView.ViewModel
+    
     var body: some View {
         VStack(spacing: 24) {
             Text("Quiz Complete! 🎉")
@@ -153,6 +174,14 @@ struct QuizSummaryView: View {
                 Text("Perfect Score! 🏅")
                     .foregroundColor(.green)
             }
+            
+            Spacer()
+            
+            Button("Back to Library") {
+//                dismiss()
+                viewModel.selectedQuiz = nil
+            }
+            .buttonStyle(.primary)
         }
         .padding()
     }

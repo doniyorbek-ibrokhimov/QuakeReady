@@ -8,6 +8,19 @@ struct DrillLibraryView: View {
             content
                 .navigationDestination(item: $viewModel.selectedDrill) { drill in
                     DrillSimulatorView(drill: drill)
+                        .navigationBarBackButtonHidden()
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button {
+                                    viewModel.selectedDrill = nil
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "chevron.left")
+                                        Text("Practice Drills")
+                                    }
+                                }
+                            }
+                        }
                 }
         }
         .environmentObject(viewModel)
