@@ -3,8 +3,7 @@ import SwiftUI
 extension DrillLibraryView {
     class ViewModel: ObservableObject {
         @Published var selectedDrill: Drill?
-        
-        let drills = [
+        @Published var drills = [
             Drill(
                 type: .basic,
                 title: "Basic Drop-Cover-Hold",

@@ -2,12 +2,13 @@ import SwiftUI
 
 struct DrillLibraryView: View {
     @StateObject private var viewModel = ViewModel()
+    @EnvironmentObject private var badgeViewModel: BadgeGalleryView.ViewModel
     
     var body: some View {
         NavigationStack {
             content
                 .navigationDestination(item: $viewModel.selectedDrill) { drill in
-                    DrillSimulatorView(drill: drill)
+                    DrillSimulatorView(drill: drill, badgeProgress: badgeViewModel.badgeProgress, drillLibraryViewModel: viewModel)
                         .navigationBarBackButtonHidden()
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {

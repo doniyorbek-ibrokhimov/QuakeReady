@@ -5,6 +5,8 @@ import AVFoundation
 extension DrillLibraryView.DrillSimulatorView {
     class ViewModel: ObservableObject {
         let drill: Drill
+        private let badgeProgress: BadgeProgress
+        private let drillLibraryViewModel: DrillLibraryView.ViewModel
         
         @Published var currentStep = 1
         @Published var timeRemaining: Int
@@ -18,8 +20,12 @@ extension DrillLibraryView.DrillSimulatorView {
         private var hapticEngine: CHHapticEngine?
         private var audioPlayer: AVAudioPlayer?
         
-        init(drill: Drill) {
+        init(drill: Drill, 
+             badgeProgress: BadgeProgress,
+             drillLibraryViewModel: DrillLibraryView.ViewModel) {
             self.drill = drill
+            self.badgeProgress = badgeProgress
+            self.drillLibraryViewModel = drillLibraryViewModel
             self.timeRemaining = drill.duration
             prepareHaptics()
             loadAudioEffects()
@@ -48,7 +54,7 @@ extension DrillLibraryView.DrillSimulatorView {
                 startTimer()
             } else {
                 isTimerRunning = false
-                showSummary = true
+                completeDrill()
             }
         }
         
@@ -134,6 +140,28 @@ extension DrillLibraryView.DrillSimulatorView {
             audioPlayer?.setVolume(0, fadeDuration: 0)
             audioPlayer?.play()
             audioPlayer?.setVolume(Float(shakeIntensity), fadeDuration: 1.0)
+        }
+        
+        private func completeDrill() {
+            // Find and update the actual drill in DrillLibraryViewModel
+            if let index = drillLibraryViewModel.drills.firstIndex(where: { $0.id == drill.id }) {
+                drillLibraryViewModel.drills[index].lastCompleted = Date()
+            }
+            
+            // Calculate accuracy based on timing and steps completed
+            //FIXME: drill accuracy also needs to be considered while setting the badge below
+            drillAccuracy = min(1.0, Double(drill.duration) / Double(totalTimeTaken))
+            
+            // Check and award badges
+            let completedDrills = drillLibraryViewModel.recentDrills.count
+            
+            if completedDrills >= 3 {
+                badgeProgress.earnBadge(.drillMaster)
+            } else if completedDrills >= 1 {
+                badgeProgress.earnBadge(.drillBeginner)
+            }
+            
+            showSummary = true
         }
     }
 } 

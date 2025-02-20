@@ -4,7 +4,6 @@ struct QuizView: View {
     @StateObject private var viewModel: ViewModel
     @EnvironmentObject private var quizLibraryViewModel: QuizLibraryView.ViewModel
     
-    //FIXME: get badgeProgress from BadgeGalleryView.ViewModel environment object
     init(quiz: Quiz, badgeProgress: BadgeProgress) {
         _viewModel = StateObject(wrappedValue: ViewModel(quiz: quiz, badgeProgress: badgeProgress))
     }

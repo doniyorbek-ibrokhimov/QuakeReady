@@ -6,8 +6,12 @@ extension DrillLibraryView {
     struct DrillSimulatorView: View {
         @StateObject private var viewModel: ViewModel
         
-        init(drill: Drill) {
-            _viewModel = StateObject(wrappedValue: ViewModel(drill: drill))
+        init(drill: Drill, badgeProgress: BadgeProgress, drillLibraryViewModel: DrillLibraryView.ViewModel) {
+            _viewModel = StateObject(wrappedValue: ViewModel(
+                drill: drill,
+                badgeProgress: badgeProgress,
+                drillLibraryViewModel: drillLibraryViewModel
+            ))
         }
         
         var body: some View {
