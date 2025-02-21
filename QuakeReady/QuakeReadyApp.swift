@@ -6,13 +6,26 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct QuakeReadyApp: App {
+    let container: ModelContainer
+    
+    init() {
+        do {
+            container = try ModelContainer(for: BadgeAchievement.self)
+        } catch {
+            //FIXME: handle it properly
+            fatalError("Failed to initialize ModelContainer: \(error)")
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            HomeView(modelContext: container.mainContext)
                 .preferredColorScheme(.dark)
         }
+        .modelContainer(container)
     }
 }

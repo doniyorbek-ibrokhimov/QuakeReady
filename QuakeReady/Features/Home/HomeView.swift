@@ -6,11 +6,15 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
     @State private var selectedTab = 0
-    @StateObject private var badgeGalleryVM = BadgeGalleryView.ViewModel()
+    @StateObject private var badgeGalleryVM: BadgeGalleryView.ViewModel
 
+    init(modelContext: ModelContext) {
+        _badgeGalleryVM = StateObject(wrappedValue: BadgeGalleryView.ViewModel(modelContext: modelContext))
+    }
     
     // Mock data for global risks
     private let countries: [Country] = [
@@ -296,8 +300,4 @@ struct RiskSection: View {
             }
         }
     }
-}
-
-#Preview {
-    HomeView()
 }

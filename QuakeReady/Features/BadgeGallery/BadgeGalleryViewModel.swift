@@ -1,16 +1,20 @@
 import SwiftUI
+import SwiftData
 
 extension BadgeGalleryView {
     class ViewModel: ObservableObject {
-        @Published var badgeProgress = BadgeProgress()
+        @Published var badgeProgress: BadgeProgress
         @Published var showingToast = false
         @Published var toastMessage = ""
         @Published var selectedFilter: BadgeFilter = .all
         @Published var selectedBadge: Badge?
         @Published var showingBadgeDetails = false
         
-
-                var badges: [Badge] {
+        init(modelContext: ModelContext) {
+            self.badgeProgress = BadgeProgress(modelContext: modelContext)
+        }
+        
+        var badges: [Badge] {
             BadgeType.allCases.map { type in
                 Badge(type: type, status: badgeProgress.getBadgeStatus(type))
             }
