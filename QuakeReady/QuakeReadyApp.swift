@@ -11,6 +11,7 @@ import SwiftData
 @main
 struct QuakeReadyApp: App {
     let container: ModelContainer
+    @AppStorage(UserDefaultsKeys.hasCompletedOnboarding) private var hasCompletedOnboarding = false
     
     init() {
         do {
@@ -27,8 +28,13 @@ struct QuakeReadyApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView(modelContext: container.mainContext)
-                .preferredColorScheme(.dark)
+            if hasCompletedOnboarding {
+                HomeView(modelContext: container.mainContext)
+                    .preferredColorScheme(.dark)
+            } else {
+                OnboardingView(hasCompletedOnboarding: $hasCompletedOnboarding)
+                    .preferredColorScheme(.dark)
+            }
         }
         .modelContainer(container)
     }
