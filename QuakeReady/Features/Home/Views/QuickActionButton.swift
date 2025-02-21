@@ -7,10 +7,19 @@
 
 import SwiftUI
 
+/// A customizable button view for primary actions on the home screen.
+/// Displays an icon and title with a colored background and scaling animation on tap.
 struct QuickActionButton: View {
+    /// The display title for the button.
     let title: String
+    
+    /// SF Symbol name for the button's icon.
     let icon: String
+    
+    /// The accent color for the button's background and text.
     let color: Color
+    
+    /// Closure to execute when the button is tapped.
     let action: () -> Void
     
     var body: some View {
