@@ -1,6 +1,4 @@
 import SwiftUI
-import CoreHaptics
-import AVFoundation
 
 extension DrillLibraryView {
     struct DrillSimulatorView: View {
