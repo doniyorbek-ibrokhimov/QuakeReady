@@ -8,13 +8,18 @@
 import SwiftUI
 
 extension DrillLibraryView {
+    /// A card-style view that displays information about a single drill.
+    /// The card can be expanded to show additional details about the drill.
     struct DrillCard: View {
+        /// The drill to display in the card.
         let drill: Drill
+        
+        /// Controls whether the card is expanded to show the drill description.
         @State private var isExpanded = false
         
         var body: some View {
             VStack(spacing: 16) {
-                // Header
+                // Header section with drill info
                 HStack(spacing: 16) {
                     Text(drill.icon)
                         .font(.title)
@@ -57,7 +62,7 @@ extension DrillLibraryView {
                     }
                 }
                 
-                // Description (expandable)
+                // Expandable description section
                 if isExpanded {
                     Text(drill.description)
                         .font(.subheadline)

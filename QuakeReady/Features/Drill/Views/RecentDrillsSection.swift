@@ -8,7 +8,10 @@
 import SwiftUI
 
 extension DrillLibraryView {
+    /// A section view that displays a list of recently completed drills.
+    /// Shows the drill icon, title, and completion date for each drill.
     struct RecentDrillsSection: View {
+        /// Array of drills that have been completed at least once.
         let drills: [Drill]
         
         var body: some View {
@@ -17,6 +20,7 @@ extension DrillLibraryView {
                     .font(.headline)
                     .padding(.horizontal)
                 
+                // List of completed drills with completion dates
                 ForEach(drills) { drill in
                     HStack {
                         Text(drill.icon)

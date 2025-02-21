@@ -1,9 +1,17 @@
 import SwiftUI
 
 extension DrillLibraryView {
+    /// A view that guides users through completing an earthquake safety drill.
+    /// Provides step-by-step instructions, timing, and progress tracking.
     struct DrillSimulatorView: View {
+        /// View model managing the drill simulation state and logic.
         @StateObject private var viewModel: ViewModel
         
+        /// Initializes a new drill simulator view.
+        /// - Parameters:
+        ///   - drill: The drill to simulate
+        ///   - badgeProgress: Service for tracking badge achievements
+        ///   - drillLibraryViewModel: Parent view model for updating completion status
         init(drill: Drill, badgeProgress: BadgeProgress, drillLibraryViewModel: DrillLibraryView.ViewModel) {
             _viewModel = StateObject(wrappedValue: ViewModel(
                 drill: drill,
@@ -24,6 +32,7 @@ extension DrillLibraryView {
             }
         }
         
+        /// The main content view containing the timer, instructions, and navigation controls.
         private var content: some View {
             VStack(spacing: 32) {
                 // Time Remaining Meter
@@ -41,7 +50,7 @@ extension DrillLibraryView {
                 
                 Spacer()
                 
-                // Action Button
+                // Navigation Controls
                 HStack {
                     if viewModel.currentStep > 1 {
                         Button("Previous Step") {

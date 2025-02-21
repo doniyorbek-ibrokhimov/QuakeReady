@@ -2,11 +2,19 @@ import SwiftUI
 import SwiftData
 
 extension DrillLibraryView {
+    /// View model responsible for managing the drill library's state and business logic.
     class ViewModel: ObservableObject {
+        /// Currently selected drill in the UI, if any.
         @Published var selectedDrill: Drill?
+        
+        /// Array of all available drills, including their completion status.
         @Published var drills: [Drill]
+        
+        /// SwiftData context for persisting drill achievements.
         private var modelContext: ModelContext
         
+        /// Initializes the view model with a SwiftData context.
+        /// - Parameter modelContext: The SwiftData context for persistence
         init(modelContext: ModelContext) {
             self.modelContext = modelContext
             self.drills = [
@@ -86,6 +94,7 @@ extension DrillLibraryView {
             loadPersistedDrills()
         }
         
+        /// Loads previously completed drills from persistent storage and updates the in-memory drill array.
         private func loadPersistedDrills() {
             do {
                 let descriptor = FetchDescriptor<DrillAchievement>()
@@ -103,6 +112,12 @@ extension DrillLibraryView {
             }
         }
         
+        /// Records the completion of a drill and persists the achievement.
+        /// - Parameters:
+        ///   - type: The type of drill completed
+        ///   - date: The completion timestamp
+        ///   - accuracy: The user's accuracy score (0-100)
+        ///   - timeTaken: The time taken to complete the drill in seconds
         func completeDrill(type: DrillType, date: Date, accuracy: Double, timeTaken: Int) {
             // Update in-memory drill
             if let index = drills.firstIndex(where: { $0.type == type }) {
@@ -125,6 +140,7 @@ extension DrillLibraryView {
             }
         }
         
+        /// Array of drills that have been completed at least once.
         var recentDrills: [Drill] {
             drills.filter { $0.lastCompleted != nil }
         }
