@@ -36,7 +36,6 @@ extension HomeView {
             return (Double(earned) / Double(total), "\(earned)/\(total) Earned")
         }
         
-        // Mock data for risk assessment
         let globalRisks: [Country] = [
             Country(id: UUID(), name: "Mexico", flag: "🇲🇽", frequency: "High", magnitude: 6.4, numberOfEarthquakes: 1972),
             Country(id: UUID(), name: "Indonesia", flag: "🇮🇩", frequency: "High", magnitude: 6.4, numberOfEarthquakes: 1870),
