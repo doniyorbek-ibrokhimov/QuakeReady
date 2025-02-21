@@ -53,7 +53,14 @@ struct EnvironmentView: View {
 
 // MARK: - Intensity Meter
 struct IntensityMeter: View {
-    let value: Double
+    @State private var timeRemaining: Int
+    @State private var value: CGFloat = 0
+    
+    init(timeRemaining: Int) {
+        self.timeRemaining = timeRemaining
+    }
+    
+    @EnvironmentObject private var viewModel: DrillLibraryView.DrillSimulatorView.ViewModel
     
     var body: some View {
         ZStack {
@@ -71,22 +78,39 @@ struct IntensityMeter: View {
                 .rotationEffect(.degrees(-90))
             
             // Center Text
-            VStack {
-                Text(String(format: "%.1f", 3 + (value * 3.5)))
-                    .font(.system(size: 32, weight: .bold, design: .monospaced))
+            VStack(spacing: 4) {
+                Text("\(timeRemaining)")
                     .contentTransition(.numericText())
-                Text("Magnitude")
+                    .font(.system(size: 32, weight: .bold, design: .monospaced))
+                
+                Text("seconds")
                     .font(.caption)
                     .foregroundColor(.gray)
             }
         }
+        .onAppear(perform: startTimer)
     }
     
     private var intensityColor: Color {
         switch value {
-        case 0.0..<0.4: return .green
+        case 0.0..<0.4: return .red
         case 0.4..<0.7: return .yellow
-        default: return .red
+        default: return .green
+        }
+    }
+    
+    private func startTimer() {
+        viewModel.isTimerRunning = true
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            if self.timeRemaining > 0 && self.viewModel.isTimerRunning {
+                withAnimation {
+                    self.timeRemaining -= 1
+                    self.value = CGFloat(self.timeRemaining) / CGFloat(viewModel.drill.duration)
+                }
+                self.viewModel.totalTimeTaken += 1
+            } else {
+                timer.invalidate()
+            }
         }
     }
 }
@@ -131,12 +155,10 @@ extension Collection {
 struct InstructionCard: View {
     let step: Int
     let text: String
-    let timeRemaining: Int
     
-    init(step: Int, text: String, timeRemaining: Int) {
+    init(step: Int, text: String) {
         self.step = step
         self.text = text
-        self.timeRemaining = timeRemaining
     }
     
     var body: some View {

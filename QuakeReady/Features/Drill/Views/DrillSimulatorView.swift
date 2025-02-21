@@ -20,57 +20,42 @@ extension DrillLibraryView {
                         DrillSummaryView(accuracy: viewModel.drillAccuracy, 
                                        timeTaken: viewModel.totalTimeTaken)
                     }
-            }
-            .onAppear {
-                viewModel.startSimulation()
-            }
-            .onChange(of: viewModel.timeRemaining) { _ in
-                viewModel.updateIntensity()
+                    .environmentObject(viewModel)
             }
         }
         
         private var content: some View {
-            ZStack {
-                // Environment Layer
-//                EnvironmentView(drill: viewModel.drill, intensity: viewModel.shakeIntensity)
-//                    .opacity(viewModel.environmentOpacity)
+            VStack(spacing: 32) {
+                // Time Remaining Meter
+                IntensityMeter(
+                    timeRemaining: viewModel.drill.duration
+                )
+                .frame(width: 120, height: 120)
                 
-                // Main Content
-                VStack(spacing: 32) {
-                    // Intensity Meter
-                    IntensityMeter(value: viewModel.shakeIntensity)
-                        .frame(width: 120, height: 120)
-                    
-                    // Interactive Character
-//                    CharacterView(step: viewModel.currentStep)
-//                        .frame(height: 200)
-                    
-                    // Step Instructions
-                    InstructionCard(
-                        step: viewModel.currentStep,
-                        text: viewModel.drill.steps[viewModel.currentStep - 1],
-                        timeRemaining: viewModel.timeRemaining
-                    )
-                    
-                    Spacer()
-                    
-                    // Action Button
-                    HStack {
-                        if viewModel.currentStep > 1 {
-                            Button("Previous Step") {
-                                viewModel.prevStep()
-                            }
-                            .buttonStyle(.secondary)
+                // Step Instructions
+                InstructionCard(
+                    step: viewModel.currentStep,
+                    text: viewModel.drill.steps[viewModel.currentStep - 1]
+                )
+                
+                Spacer()
+                
+                // Action Button
+                HStack {
+                    if viewModel.currentStep > 1 {
+                        Button("Previous Step") {
+                            viewModel.prevStep()
                         }
-                        
-                        ActionButton(
-                            currentStep: viewModel.currentStep,
-                            action: viewModel.nextStep
-                        )
+                        .buttonStyle(.secondary)
                     }
+                    
+                    ActionButton(
+                        currentStep: viewModel.currentStep,
+                        action: viewModel.nextStep
+                    )
                 }
-                .padding()
             }
+            .padding()
         }
     }
 }
