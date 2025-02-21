@@ -1,5 +1,26 @@
+//
+//  BadgeType.swift
+//  QuakeReady
+//
+//  Created by Doniyorbek Ibrokhimov on 22/02/25.
+//
+
 import Foundation
 
+/// Different badges users can earn in QuakeReady
+/// 
+/// Each badge type comes with:
+/// - A friendly title for display
+/// - An SF Symbol icon name
+/// - A description of the achievement
+/// - Specific criteria for earning it
+///
+/// Example:
+/// ```
+/// let badge = BadgeType.quickLearner
+/// print(badge.title) // "Quick Learner"
+/// print(badge.icon)  // "bolt.fill"
+/// ```
 enum BadgeType: String, CaseIterable {
     case quickLearner
     case drillBeginner

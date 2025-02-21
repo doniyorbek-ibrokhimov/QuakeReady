@@ -1,11 +1,24 @@
+//
+//  BadgeCard.swift
+//  QuakeReady
+//
+//  Created by Doniyorbek Ibrokhimov on 22/02/25.
+//
+
 import SwiftUI
 
+/// A card view that displays a badge's icon, title, and status
+///
+/// Features:
+/// - Glowing effect for earned badges
+/// - Dimmed appearance for locked badges
+/// - Status-specific text display
 struct BadgeCard: View {
     let badge: Badge
     
     var body: some View {
         VStack(spacing: 12) {
-            // Icon
+            // Badge icon with glow effect when earned
             Image(systemName: badge.icon)
                 .font(.system(size: 32))
                 .foregroundColor(badge.status.isEarned ? .yellow : .gray)
@@ -17,13 +30,13 @@ struct BadgeCard: View {
                         : nil
                 )
             
-            // Title
+            // Badge title
             Text(badge.title)
                 .font(.caption)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.center)
             
-            // Status
+            // Badge status (earned date or unlock criteria)
             statusView
         }
         .padding(16)
@@ -37,6 +50,7 @@ struct BadgeCard: View {
         .opacity(badge.status.isEarned ? 1 : 0.4)
     }
     
+    /// Displays either the earned date or unlock criteria based on badge status
     @ViewBuilder
     private var statusView: some View {
         switch badge.status {
@@ -52,49 +66,3 @@ struct BadgeCard: View {
         }
     }
 }
-
-struct BadgeDetailView: View {
-    let badge: Badge
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        VStack(spacing: 24) {
-            // Header
-            Image(systemName: badge.icon)
-                .font(.system(size: 64))
-                .foregroundColor(badge.status.isEarned ? .yellow : .gray)
-            
-            Text(badge.title)
-                .font(.title2.bold())
-            
-            if badge.status.isEarned {
-                Text(badge.description)
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(.gray)
-            }
-            
-            statusDetail
-        }
-        .padding()
-        .padding(.top, 32)
-        .foregroundColor(.white)
-        .presentationDragIndicator(.visible)
-        .presentationDetents([.fraction(0.35)])
-        .presentationBackground(.thinMaterial)
-    }
-    
-    @ViewBuilder
-    private var statusDetail: some View {
-        switch badge.status {
-        case .earned(let date):
-            Text("Earned on \(date.formatted(.dateTime.month().day().year()))")
-                .font(.subheadline)
-                .foregroundColor(.green)
-        case .locked(let criteria):
-            Text("Locked: \(criteria)")
-                .font(.subheadline)
-                .foregroundColor(.orange)
-        }
-    }
-} 
