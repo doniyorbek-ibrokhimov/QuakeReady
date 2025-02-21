@@ -38,17 +38,17 @@ extension HomeView {
         
         // Mock data for risk assessment
         let globalRisks: [Country] = [
-            Country(id: UUID(), name: "USA", flag: "🇺🇸", frequency: "Medium", magnitude: 7.1, numberOfEarthquakes: 120),
-            Country(id: UUID(), name: "Japan", flag: "🇯🇵", frequency: "High", magnitude: 8.2, numberOfEarthquakes: 480),
-            Country(id: UUID(), name: "Chile", flag: "🇨🇱", frequency: "High", magnitude: 7.8, numberOfEarthquakes: 250),
-            Country(id: UUID(), name: "Indonesia", flag: "🇮🇩", frequency: "High", magnitude: 7.9, numberOfEarthquakes: 350)
+            Country(id: UUID(), name: "Mexico", flag: "🇲🇽", frequency: "High", magnitude: 6.4, numberOfEarthquakes: 1972),
+            Country(id: UUID(), name: "Indonesia", flag: "🇮🇩", frequency: "High", magnitude: 6.4, numberOfEarthquakes: 1870),
+            Country(id: UUID(), name: "Japan", flag: "🇯🇵", frequency: "High", magnitude: 7.5, numberOfEarthquakes: 1559),
+            Country(id: UUID(), name: "Philippines", flag: "🇵🇭", frequency: "High", magnitude: 7.1, numberOfEarthquakes: 996)
         ]
         
         let nearbyRisks: [Country] = [
-            Country(id: UUID(), name: "South Korea", flag: "🇰🇷", frequency: "Low", magnitude: 5.4, numberOfEarthquakes: 30),
-            Country(id: UUID(), name: "Taiwan", flag: "🇹🇼", frequency: "High", magnitude: 7.6, numberOfEarthquakes: 180),
-            Country(id: UUID(), name: "Philippines", flag: "🇵🇭", frequency: "High", magnitude: 7.2, numberOfEarthquakes: 200),
-            Country(id: UUID(), name: "Vietnam", flag: "🇻🇳", frequency: "Medium", magnitude: 6.8, numberOfEarthquakes: 85)
+            Country(id: UUID(), name: "Mexico", flag: "🇲🇽", frequency: "High", magnitude: 6.4, numberOfEarthquakes: 1972),
+            Country(id: UUID(), name: "Canada", flag: "🇨🇦", frequency: "Medium", magnitude: 5.7, numberOfEarthquakes: 63),
+            Country(id: UUID(), name: "Guatemala", flag: "🇬🇹", frequency: "High", magnitude: 6.4, numberOfEarthquakes: 704),
+            Country(id: UUID(), name: "El Salvador", flag: "🇸🇻", frequency: "High", magnitude: 6.2, numberOfEarthquakes: 366)
         ]
     }
 } 

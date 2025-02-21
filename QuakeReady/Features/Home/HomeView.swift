@@ -174,7 +174,7 @@ struct CountryCard: View {
                 .fontWeight(.bold)
             
             Group {
-                Text("Magnitude: \(country.magnitude, specifier: "%.1f")")
+                Text("Strongest: M\(country.magnitude, specifier: "%.1f")")
                 Text("\(country.numberOfEarthquakes) earthquakes/year")
             }
             .font(.subheadline)
