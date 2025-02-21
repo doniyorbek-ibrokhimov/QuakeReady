@@ -9,61 +9,42 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
-    @State private var selectedTab = 0
-    @StateObject private var badgeGalleryVM: BadgeGalleryView.ViewModel
-    let modelContext: ModelContext
+    @StateObject private var viewModel: ViewModel
+    private let modelContext: ModelContext
 
+    
     init(modelContext: ModelContext) {
+        _viewModel = StateObject(wrappedValue: ViewModel(modelContext: modelContext))
         self.modelContext = modelContext
-        _badgeGalleryVM = StateObject(wrappedValue: BadgeGalleryView.ViewModel(modelContext: modelContext))
     }
     
-    // Mock data for global risks
-    private let countries: [Country] = [
-        Country(id: UUID(), name: "USA", flag: "🇺🇸", frequency: "Medium", damages: "$70B", injuries: "12,000"),
-        Country(id: UUID(), name: "Japan", flag: "🇯🇵", frequency: "High", damages: "$100B", injuries: "15,000"),
-        Country(id: UUID(), name: "Chile", flag: "🇨🇱", frequency: "High", damages: "$30B", injuries: "8,000"),
-        Country(id: UUID(), name: "Indonesia", flag: "🇮🇩", frequency: "High", damages: "$40B", injuries: "10,000")
-    ]
-    
-    // Mock data for nearby risks
-    private let nearbyCountries: [Country] = [
-        Country(id: UUID(), name: "South Korea", flag: "🇰🇷", frequency: "Low", damages: "$20B", injuries: "5,000"),
-        Country(id: UUID(), name: "Taiwan", flag: "🇹🇼", frequency: "High", damages: "$45B", injuries: "9,000"),
-        Country(id: UUID(), name: "Philippines", flag: "🇵🇭", frequency: "High", damages: "$25B", injuries: "7,000"),
-        Country(id: UUID(), name: "Vietnam", flag: "🇻🇳", frequency: "Medium", damages: "$15B", injuries: "4,000")
-    ]
-    
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $viewModel.selectedTab) {
             mainView
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
                 .tag(0)
             
-            // Drill Tab
             DrillLibraryView(modelContext: modelContext)
                 .tabItem {
                     Label("Drill", systemImage: "figure.run")
                 }
                 .tag(1)
             
-            // Quiz Tab
             QuizLibraryView(modelContext: modelContext)
                 .tabItem {
                     Label("Quiz", systemImage: "questionmark.circle.fill")
                 }
                 .tag(2)
             
-            // Badge Gallery Tab
             BadgeGalleryView()
                 .tabItem {
                     Label("Badges", systemImage: "medal.fill")
                 }
                 .tag(3)
         }
-        .environmentObject(badgeGalleryVM)
+        .environmentObject(viewModel.badgeGalleryViewModel)
     }
     
     private var mainView: some View {
@@ -97,7 +78,7 @@ struct HomeView: View {
                     icon: "figure.run",
                     color: .blue
                 ) {
-                    selectedTab = 1
+                    viewModel.selectedTab = 1
                 }
                 
                 QuickActionButton(
@@ -105,7 +86,7 @@ struct HomeView: View {
                     icon: "questionmark.circle.fill",
                     color: .purple
                 ) {
-                    selectedTab = 2
+                    viewModel.selectedTab = 2
                 }
             }
             .padding(.horizontal)
@@ -119,7 +100,7 @@ struct HomeView: View {
                     .font(.title2.bold())
                 Spacer()
                 Button("View All") {
-                    selectedTab = 3
+                    viewModel.selectedTab = 3
                 }
                 .foregroundColor(.blue)
             }
@@ -127,25 +108,29 @@ struct HomeView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
+                    let (drillProgress, drillDetail) = viewModel.drillProgress
+                    let (quizProgress, quizDetail) = viewModel.quizProgress
+                    let (badgeProgress, badgeDetail) = viewModel.badgeProgress
+                    
                     ProgressCard(
                         title: "Drills",
                         icon: "figure.run",
-                        progress: 0.7,
-                        detail: "7/10 Complete"
+                        progress: drillProgress,
+                        detail: drillDetail
                     )
                     
                     ProgressCard(
                         title: "Quizzes",
                         icon: "brain",
-                        progress: 0.4,
-                        detail: "4/10 Complete"
+                        progress: quizProgress,
+                        detail: quizDetail
                     )
                     
                     ProgressCard(
                         title: "Badges",
                         icon: "medal.fill",
-                        progress: 0.3,
-                        detail: "3/10 Earned"
+                        progress: badgeProgress,
+                        detail: badgeDetail
                     )
                 }
                 .padding(.horizontal)
@@ -159,14 +144,14 @@ struct HomeView: View {
             RiskSection(
                 title: "Global Earthquake Risks",
                 icon: "globe",
-                countries: countries
+                countries: viewModel.globalRisks
             )
             
             // Nearby Risks
             RiskSection(
                 title: "Nearby Earthquake Risks",
                 icon: "location.circle.fill",
-                countries: nearbyCountries
+                countries: viewModel.nearbyRisks
             )
         }
     }

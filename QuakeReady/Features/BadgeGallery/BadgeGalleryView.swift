@@ -124,8 +124,8 @@ struct BadgeGalleryView: View {
             Text("Your Achievements")
                 .font(.title.bold())
             
-            ProgressView(value: Double(viewModel.earnedBadgesCount), total: Double(viewModel.badges.count)) {
-                Text("\(viewModel.earnedBadgesCount)/\(viewModel.badges.count) Badges Unlocked")
+            ProgressView(value: Double(viewModel.earnedBadgesCount), total: Double(viewModel.totalBadgesCount)) {
+                Text("\(viewModel.earnedBadgesCount)/\(viewModel.totalBadgesCount) Badges Unlocked")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
@@ -191,6 +191,14 @@ class BadgeProgress: ObservableObject {
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         loadPersistedBadges()
+    }
+    
+    var earnedBadgesCount: Int {
+        earnedBadges.count
+    }
+    
+    var totalBadgesCount: Int {
+        BadgeType.allCases.count
     }
     
     private func loadPersistedBadges() {

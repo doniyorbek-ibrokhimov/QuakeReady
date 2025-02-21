@@ -29,7 +29,11 @@ extension BadgeGalleryView {
         }
         
         var earnedBadgesCount: Int {
-            badges.filter { $0.status.isEarned }.count
+            badgeProgress.earnedBadgesCount
+        }
+        
+        var totalBadgesCount: Int {
+            badgeProgress.totalBadgesCount
         }
         
         func handleBadgeTap(_ badge: Badge) {
