@@ -91,12 +91,17 @@ struct InstructionCard: View {
                 .font(.title3)
                 .multilineTextAlignment(.center)
             
-            // Checklist Items
-            if let checks = checklistItems[safe: step - 1] {
+            // Instructions
+            if let instructions = checklistItems[safe: step - 1] {
                 VStack(alignment: .leading, spacing: 8) {
-                    ForEach(checks, id: \.self) { item in
-                        Label(item.text, systemImage: item.done ? "checkmark.circle.fill" : "xmark.circle.fill")
-                            .foregroundColor(item.done ? .green : .red)
+                    ForEach(instructions, id: \.self) { item in
+                        Label(
+                            title: { Text(item.text) },
+                            icon: {
+                                Image(systemName: item.isWarning ? "exclamationmark.triangle.fill" : "arrow.right.circle.fill")
+                            }
+                        )
+                        .foregroundColor(item.isWarning ? .orange : .green)
                     }
                 }
                 .font(.callout)
@@ -111,7 +116,7 @@ struct InstructionCard: View {
 // MARK: - Supporting Types
 struct ChecklistItem: Hashable {
     let text: String
-    let done: Bool
+    let isWarning: Bool  // true for things to avoid, false for things to do
 }
 
 // MARK: - Action Button

@@ -20,16 +20,16 @@ extension DrillLibraryView {
                     steps: ["Drop to the ground", "Cover your head", "Hold on"],
                     checklistItems: [
                         [
-                            ChecklistItem(text: "Move away from windows", done: true),
-                            ChecklistItem(text: "Find clear space", done: true)
+                            ChecklistItem(text: "Move away from windows", isWarning: false),
+                            ChecklistItem(text: "Find clear space", isWarning: false)
                         ],
                         [
-                            ChecklistItem(text: "Protect head and neck", done: true),
-                            ChecklistItem(text: "Stay away from furniture", done: false)
+                            ChecklistItem(text: "Protect head and neck", isWarning: false),
+                            ChecklistItem(text: "Keep distance from furniture", isWarning: true)
                         ],
                         [
-                            ChecklistItem(text: "Grip stable object", done: true),
-                            ChecklistItem(text: "Maintain position", done: true)
+                            ChecklistItem(text: "Hold onto stable object", isWarning: false),
+                            ChecklistItem(text: "Stay in position until shaking stops", isWarning: false)
                         ]
                     ],
                     isNew: false
@@ -44,16 +44,16 @@ extension DrillLibraryView {
                     steps: ["Press all floor buttons", "Brace against wall", "Exit quickly when possible"],
                     checklistItems: [
                         [
-                            ChecklistItem(text: "Press emergency button", done: true),
-                            ChecklistItem(text: "Stay calm", done: true)
+                            ChecklistItem(text: "Press emergency button", isWarning: false),
+                            ChecklistItem(text: "Remain calm and alert", isWarning: false)
                         ],
                         [
-                            ChecklistItem(text: "Brace against walls", done: true),
-                            ChecklistItem(text: "Keep away from doors", done: false)
+                            ChecklistItem(text: "Brace against walls", isWarning: false),
+                            ChecklistItem(text: "Stay clear of elevator doors", isWarning: true)
                         ],
                         [
-                            ChecklistItem(text: "Check door status", done: true),
-                            ChecklistItem(text: "Exit when safe", done: true)
+                            ChecklistItem(text: "Wait for door status check", isWarning: false),
+                            ChecklistItem(text: "Exit only when confirmed safe", isWarning: true)
                         ]
                     ],
                     isNew: true
@@ -68,16 +68,16 @@ extension DrillLibraryView {
                     steps: ["Stay calm", "Move away from crowds", "Find stable shelter"],
                     checklistItems: [
                         [
-                            ChecklistItem(text: "Control breathing", done: true),
-                            ChecklistItem(text: "Assess surroundings", done: true)
+                            ChecklistItem(text: "Control your breathing", isWarning: false),
+                            ChecklistItem(text: "Survey your surroundings", isWarning: false)
                         ],
                         [
-                            ChecklistItem(text: "Walk, don't run", done: true),
-                            ChecklistItem(text: "Avoid glass facades", done: false)
+                            ChecklistItem(text: "Move calmly and steadily", isWarning: false),
+                            ChecklistItem(text: "Keep away from glass windows", isWarning: true)
                         ],
                         [
-                            ChecklistItem(text: "Find interior wall", done: true),
-                            ChecklistItem(text: "Stay away from decorations", done: true)
+                            ChecklistItem(text: "Locate an interior wall", isWarning: false),
+                            ChecklistItem(text: "Avoid overhead decorations", isWarning: true)
                         ]
                     ],
                     isNew: true
