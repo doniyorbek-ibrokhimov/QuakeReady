@@ -7,11 +7,15 @@ extension QuizLibraryView {
         @Published var quizzes: [Quiz]
         private var modelContext: ModelContext
         
+        // Store quiz IDs as static constants
+        private static let basicSafetyQuizId = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        private static let postQuakeQuizId = UUID(uuidString: "F621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        
         init(modelContext: ModelContext) {
             self.modelContext = modelContext
             self.quizzes = [
                 Quiz(
-                    id: UUID(),
+                    id: Self.basicSafetyQuizId,  // Use constant ID
                     title: "Basic Earthquake Safety",
                     icon: "🏠",
                     category: "Home Safety",
@@ -59,25 +63,7 @@ extension QuizLibraryView {
                     ]
                 ),
                 Quiz(
-                    id: UUID(),
-                    title: "Public Space Protocols",
-                    icon: "🛍️",
-                    category: "Crowded Areas",
-                    questions: [
-                        Question(
-                            scenario: "You're in a mall during a quake",
-                            options: [
-                                "Hide under a counter",
-                                "Run to the exit",
-                                "Stand near windows"
-                            ],
-                            correctIndex: 0,
-                            feedback: "Correct! Stay low and protected."
-                        )
-                    ]
-                ),
-                Quiz(
-                    id: UUID(),
+                    id: Self.postQuakeQuizId,  // Use constant ID
                     title: "Post-Earthquake Actions",
                     icon: "⚠️",
                     category: "Emergency Response",
