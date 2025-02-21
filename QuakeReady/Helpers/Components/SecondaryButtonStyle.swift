@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+/// A custom button style for secondary actions throughout the app.
+/// Provides a consistent appearance with gray background, white text, and interactive animations.
 struct SecondaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -22,7 +24,9 @@ struct SecondaryButtonStyle: ButtonStyle {
     }
 }
 
+/// Extension providing a convenient static method for creating secondary button styles.
 extension ButtonStyle where Self == SecondaryButtonStyle {
+    /// Creates a secondary button style with default settings.
     static var secondary: SecondaryButtonStyle {
         SecondaryButtonStyle()
     }

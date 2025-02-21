@@ -19,6 +19,9 @@ struct AnswerButton: View {
     
     /// Whether the result is being shown after the user has answered.
     let showResult: Bool
+
+    /// Action to perform when the button is tapped.
+    let action: () -> Void
     
     var body: some View {
         Button(action: action) {
