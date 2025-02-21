@@ -58,27 +58,6 @@ enum BadgeType: String, CaseIterable {
     }
 }
 
-//enum Badge {
-//    case quickLearner, drillMaster, safetyScholar, globalGuardian
-//    
-//    var title: String {
-//        switch self {
-//        case .quickLearner: return "Quick Learner"
-//        case .drillMaster: return "Drill Master"
-//        case .safetyScholar: return "Safety Scholar"
-//        case .globalGuardian: return "Global Guardian"
-//        }
-//    
-//        var icon: String {
-//            switch self {
-//            case .quickLearner: return "bolt.fill"
-//            case .drillMaster: return "figure.run"
-//            case .safetyScholar: return "book.closed.fill"
-//            case .globalGuardian: return "globe"
-//            }
-//        }
-//}
-
 struct Badge: Identifiable {
     let id = UUID()
     let type: BadgeType

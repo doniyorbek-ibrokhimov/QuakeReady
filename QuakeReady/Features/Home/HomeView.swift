@@ -197,7 +197,7 @@ struct CountryCard: View {
     }
 }
 
-// FIXME: move to a separate file
+// TODO: move to a separate file
 struct ScaleButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -206,7 +206,7 @@ struct ScaleButtonStyle: ButtonStyle {
     }
 }
 
-// FIXME: move to a separate file
+// TODO: move to a separate file
 struct Country: Identifiable {
     let id: UUID
     let name: String
