@@ -67,25 +67,21 @@ struct BadgeDetailView: View {
             Text(badge.title)
                 .font(.title2.bold())
             
-            Text(badge.description)
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .foregroundColor(.gray)
+            if badge.status.isEarned {
+                Text(badge.description)
+                    .font(.body)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.gray)
+            }
             
             statusDetail
-            
-            Spacer()
-            
-            Button("Close") {
-                dismiss()
-            }
-            .font(.headline)
-            .foregroundColor(.blue)
         }
         .padding()
+        .padding(.top, 32)
         .foregroundColor(.white)
         .presentationDragIndicator(.visible)
-        .presentationDetents([.medium])
+        .presentationDetents([.fraction(0.35)])
+        .presentationBackground(.thinMaterial)
     }
     
     @ViewBuilder

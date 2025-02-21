@@ -71,6 +71,7 @@ struct Badge: Identifiable {
 
 struct BadgeGalleryView: View {
     @EnvironmentObject private var viewModel: ViewModel
+    @Namespace private var badgeNamespace
 
     enum BadgeFilter {
         case all, earned, locked
@@ -83,40 +84,33 @@ struct BadgeGalleryView: View {
     ]
     
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-            
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Header Section
-                    headerSection
-                    
-                    // Filter Tabs
-                    filterTabs
-                    
-                    // Badge Grid
-                    LazyVGrid(columns: columns, spacing: 12) {
-                        ForEach(viewModel.filteredBadges) { badge in
-                            BadgeCard(badge: badge)
-                                .onTapGesture {
-                                    viewModel.handleBadgeTap(badge)
-                                }
-                        }
+        ScrollView {
+            VStack(spacing: 24) {
+                // Header Section
+                headerSection
+                
+                // Filter Tabs
+                filterTabs
+                
+                // Badge Grid
+                LazyVGrid(columns: columns, spacing: 12) {
+                    ForEach(viewModel.filteredBadges) { badge in
+                        BadgeCard(badge: badge)
+                            .onTapGesture {
+                                viewModel.handleBadgeTap(badge)
+                            }
+                            .transition(.scale.combined(with: .opacity))
                     }
-                    .padding(.horizontal)
                 }
-                .padding(.vertical)
+                .padding(.horizontal)
+                .animation(.spring(duration: 0.3), value: viewModel.selectedFilter)
             }
+            .padding(.vertical)
         }
         .foregroundColor(.white)
-        .sheet(isPresented: $viewModel.showingBadgeDetails) {
-            if let badge = viewModel.selectedBadge {
-                BadgeDetailView(badge: badge)
-            }
+        .sheet(item: $viewModel.selectedBadge) { badge in
+            BadgeDetailView(badge: badge)
         }
-        .overlay(
-            ToastView(message: viewModel.toastMessage, isShowing: $viewModel.showingToast)
-        )
     }
     
     private var headerSection: some View {
@@ -137,13 +131,24 @@ struct BadgeGalleryView: View {
     private var filterTabs: some View {
         HStack {
             ForEach([BadgeFilter.all, .earned, .locked], id: \.self) { filter in
-                Button(action: { viewModel.selectedFilter = filter }) {
+                Button(action: { 
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        viewModel.selectedFilter = filter
+                    }
+                }) {
                     Text(filter.title)
                         .font(.subheadline)
+                        .containerRelativeFrame(.horizontal) { size, axis in
+                            size * 0.2
+                        }
                         .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background(viewModel.selectedFilter == filter ? Color.blue : Color.gray.opacity(0.2))
-                        .cornerRadius(20)
+                        .background {
+                            if viewModel.selectedFilter == filter {
+                                Color.blue
+                                    .matchedGeometryEffect(id: "badge", in: badgeNamespace)
+                                    .clipShape(.capsule)
+                            }
+                        }
                 }
             }
         }
@@ -158,30 +163,6 @@ extension BadgeGalleryView.BadgeFilter {
         case .locked: return "Locked"
         }
     }
-}
-
-struct ToastView: View {
-    let message: String
-    @Binding var isShowing: Bool
-    
-    var body: some View {
-        if isShowing {
-            VStack {
-                Spacer()
-                Text(message)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.7))
-                    .cornerRadius(8)
-                    .padding(.bottom, 32)
-            }
-        }
-    }
-}
-
-#Preview {
-    BadgeGalleryView()
-        .preferredColorScheme(.dark)
 }
 
 class BadgeProgress: ObservableObject {

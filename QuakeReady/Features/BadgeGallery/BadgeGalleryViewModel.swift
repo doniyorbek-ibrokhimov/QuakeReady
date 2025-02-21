@@ -4,11 +4,8 @@ import SwiftData
 extension BadgeGalleryView {
     class ViewModel: ObservableObject {
         @Published var badgeProgress: BadgeProgress
-        @Published var showingToast = false
-        @Published var toastMessage = ""
         @Published var selectedFilter: BadgeFilter = .all
         @Published var selectedBadge: Badge?
-        @Published var showingBadgeDetails = false
         
         init(modelContext: ModelContext) {
             self.badgeProgress = BadgeProgress(modelContext: modelContext)
@@ -38,24 +35,6 @@ extension BadgeGalleryView {
         
         func handleBadgeTap(_ badge: Badge) {
             selectedBadge = badge
-            
-            switch badge.status {
-            case .earned(let date):
-                let formatter = DateFormatter()
-                formatter.dateStyle = .medium
-                toastMessage = "Earned on \(formatter.string(from: date))"
-                let generator = UIImpactFeedbackGenerator(style: .light)
-                generator.impactOccurred()
-                showingBadgeDetails = true
-                
-            case .locked(let criteria):
-                toastMessage = "Locked: \(criteria)"
-                showingToast = true
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    self.showingToast = false
-                }
-            }
         }
     }
 } 
