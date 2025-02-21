@@ -2,17 +2,34 @@ import SwiftUI
 import SwiftData
 
 extension QuizLibraryView {
+    /// View model managing the quiz library's state and business logic.
+    /// Handles quiz selection, completion tracking, and achievement persistence.
     class ViewModel: ObservableObject {
+        /// Currently selected quiz in the UI, if any.
         @Published var selectedQuiz: Quiz?
+        
+        /// Array of all available quizzes, including their completion status.
         @Published var quizzes: [Quiz]
+        
+        /// SwiftData context for persisting quiz achievements.
         private var modelContext: ModelContext
         
-        // Store quiz IDs as static constants
+        // MARK: - Quiz Identifiers
+        
+        /// Unique identifier for the basic safety quiz.
         private static let basicSafetyQuizId = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        
+        /// Unique identifier for the post-earthquake quiz.
         private static let postQuizId = UUID(uuidString: "F621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        
+        /// Unique identifier for the elevator safety quiz.
         private static let elevatorQuizId = UUID(uuidString: "F621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        
+        /// Unique identifier for the crowd safety quiz.
         private static let crowdSafetyQuizId = UUID(uuidString: "A621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
         
+        /// Initializes the quiz library view model.
+        /// - Parameter modelContext: SwiftData context for persistence
         init(modelContext: ModelContext) {
             self.modelContext = modelContext
             self.quizzes = [
@@ -134,6 +151,8 @@ extension QuizLibraryView {
             loadPersistedQuizzes()
         }
         
+        /// Loads previously completed quiz achievements from persistent storage
+        /// and updates the in-memory quiz array with achievement data.
         private func loadPersistedQuizzes() {
             do {
                 let descriptor = FetchDescriptor<QuizAchievement>()
@@ -150,6 +169,11 @@ extension QuizLibraryView {
             }
         }
         
+        /// Records the completion of a quiz and persists the achievement.
+        /// - Parameters:
+        ///   - id: The unique identifier of the completed quiz
+        ///   - score: The number of correct answers
+        ///   - totalQuestions: The total number of questions in the quiz
         func completeQuiz(id: UUID, score: Int, totalQuestions: Int) {
             // Create and save achievement
             let achievement = QuizAchievement(
@@ -172,6 +196,8 @@ extension QuizLibraryView {
             }
         }
         
+        /// Sets the currently selected quiz.
+        /// - Parameter quiz: The quiz to select
         func selectQuiz(_ quiz: Quiz) {
             selectedQuiz = quiz
         }

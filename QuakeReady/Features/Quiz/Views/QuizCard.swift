@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct QuizCard: View {
+    /// The quiz model containing quiz details.
     let quiz: Quiz
     
     var body: some View {

@@ -1,8 +1,19 @@
 import SwiftUI
 
+/// A view that presents a quiz with multiple-choice questions.
+/// Provides navigation between questions, answer feedback, and progress tracking.
 struct QuizView: View {
+    /// View model managing the quiz state and logic.
     @StateObject private var viewModel: ViewModel
     
+    /// Animation transition for content changes.
+    private let contentTransition: ContentTransition = .numericText(countsDown: true)
+    
+    /// Initializes a new quiz view.
+    /// - Parameters:
+    ///   - quiz: The quiz to be taken
+    ///   - badgeProgress: Service for tracking badge achievements
+    ///   - quizLibraryViewModel: Parent view model for updating completion status
     init(quiz: Quiz, badgeProgress: BadgeProgress, quizLibraryViewModel: QuizLibraryView.ViewModel) {
         _viewModel = StateObject(wrappedValue: ViewModel(
             quiz: quiz,
@@ -11,15 +22,13 @@ struct QuizView: View {
         ))
     }
     
-    private let contentTransition: ContentTransition = .numericText(countsDown: true)
-    
     var body: some View {
         VStack(spacing: 32) {
-            // Progress dots
+            // Progress indicator
             ProgressDots(totalSteps: viewModel.quiz.questions.count, currentStep: viewModel.currentQuestionIndex + 1)
                 .padding(.top)
             
-            // Scenario
+            // Question scenario
             Text(viewModel.quiz.questions[viewModel.currentQuestionIndex].scenario)
                 .font(.title3)
                 .multilineTextAlignment(.center)
@@ -47,7 +56,7 @@ struct QuizView: View {
             
             Spacer()
             
-            // Feedback
+            // Answer feedback
             if viewModel.showFeedback {
                 FeedbackView(
                     isCorrect: viewModel.selectedAnswerIndex == viewModel.quiz.questions[viewModel.currentQuestionIndex].correctIndex,
@@ -56,6 +65,7 @@ struct QuizView: View {
                 .contentTransition(contentTransition)
             }
             
+            // Navigation controls
             HStack {
                 if viewModel.currentQuestionIndex > 0 {
                     Button(action: viewModel.prevQuestion) {

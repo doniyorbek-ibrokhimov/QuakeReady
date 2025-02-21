@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct FeedbackView: View {
+    /// Whether the user's answer is correct.
     let isCorrect: Bool
+    
+    /// The feedback message to display to the user.
     let feedback: String
     
     var dynamicFeedback: String {

@@ -8,11 +8,17 @@
 import SwiftUI
 
 struct AnswerButton: View {
+    /// The text displayed on the button.
     let text: String
+    
+    /// Whether the button is currently selected by the user.
     let isSelected: Bool
+    
+    /// Whether the button represents the correct answer.
     let isCorrect: Bool
+    
+    /// Whether the result is being shown after the user has answered.
     let showResult: Bool
-    let action: () -> Void
     
     var body: some View {
         Button(action: action) {

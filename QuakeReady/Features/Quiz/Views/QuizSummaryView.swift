@@ -8,8 +8,13 @@
 import SwiftUI
 
 struct QuizSummaryView: View {
+    /// The score achieved by the user.
     let score: Int
+    
+    /// The total number of questions in the quiz.
     let total: Int
+    
+    /// The badges earned by the user during this quiz session.
     let earnedBadges: [BadgeType]
     
     @EnvironmentObject private var viewModel: QuizLibraryView.ViewModel
