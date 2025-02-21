@@ -1,9 +1,15 @@
 import SwiftUI
 
+/// A view that introduces new users to the app's key features.
+/// Presents a series of pages with animations and allows users to navigate through or skip the introduction.
 struct OnboardingView: View {
+    /// Binding to track whether the user has completed onboarding.
     @Binding var hasCompletedOnboarding: Bool
+    
+    /// The currently displayed page index.
     @State private var currentPage = 0
     
+    /// Array of pages to display during onboarding.
     private let pages = [
         OnboardingPage(
             title: "Welcome to QuakeReady",
@@ -31,9 +37,12 @@ struct OnboardingView: View {
         )
     ]
     
+    /// Initializes the onboarding view and configures the page control appearance.
+    /// - Parameter hasCompletedOnboarding: Binding to track onboarding completion
     init(hasCompletedOnboarding: Binding<Bool>) {
         self._hasCompletedOnboarding = hasCompletedOnboarding
         
+        // Configure UIPageControl appearance
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.blue)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(Color.gray.opacity(0.3))
     }
@@ -67,7 +76,7 @@ struct OnboardingView: View {
             
             Spacer()
             
-            // Action Buttons
+            // Navigation Buttons
             VStack(spacing: 16) {
                 if currentPage < pages.count - 1 {
                     Button("Next") {
@@ -103,10 +112,3 @@ struct OnboardingView: View {
         .animation(.spring, value: currentPage)
     }
 }
-
-struct OnboardingPage {
-    let title: String
-    let description: String
-    let icon: String
-    let color: Color
-} 
