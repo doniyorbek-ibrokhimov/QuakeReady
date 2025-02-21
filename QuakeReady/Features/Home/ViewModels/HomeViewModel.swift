@@ -38,17 +38,17 @@ extension HomeView {
         
         // Mock data for risk assessment
         let globalRisks: [Country] = [
-            Country(id: UUID(), name: "USA", flag: "🇺🇸", frequency: "Medium", damages: "$70B", injuries: "12,000"),
-            Country(id: UUID(), name: "Japan", flag: "🇯🇵", frequency: "High", damages: "$100B", injuries: "15,000"),
-            Country(id: UUID(), name: "Chile", flag: "🇨🇱", frequency: "High", damages: "$30B", injuries: "8,000"),
-            Country(id: UUID(), name: "Indonesia", flag: "🇮🇩", frequency: "High", damages: "$40B", injuries: "10,000")
+            Country(id: UUID(), name: "USA", flag: "🇺🇸", frequency: "Medium", magnitude: 7.1, numberOfEarthquakes: 120),
+            Country(id: UUID(), name: "Japan", flag: "🇯🇵", frequency: "High", magnitude: 8.2, numberOfEarthquakes: 480),
+            Country(id: UUID(), name: "Chile", flag: "🇨🇱", frequency: "High", magnitude: 7.8, numberOfEarthquakes: 250),
+            Country(id: UUID(), name: "Indonesia", flag: "🇮🇩", frequency: "High", magnitude: 7.9, numberOfEarthquakes: 350)
         ]
         
         let nearbyRisks: [Country] = [
-            Country(id: UUID(), name: "South Korea", flag: "🇰🇷", frequency: "Low", damages: "$20B", injuries: "5,000"),
-            Country(id: UUID(), name: "Taiwan", flag: "🇹🇼", frequency: "High", damages: "$45B", injuries: "9,000"),
-            Country(id: UUID(), name: "Philippines", flag: "🇵🇭", frequency: "High", damages: "$25B", injuries: "7,000"),
-            Country(id: UUID(), name: "Vietnam", flag: "🇻🇳", frequency: "Medium", damages: "$15B", injuries: "4,000")
+            Country(id: UUID(), name: "South Korea", flag: "🇰🇷", frequency: "Low", magnitude: 5.4, numberOfEarthquakes: 30),
+            Country(id: UUID(), name: "Taiwan", flag: "🇹🇼", frequency: "High", magnitude: 7.6, numberOfEarthquakes: 180),
+            Country(id: UUID(), name: "Philippines", flag: "🇵🇭", frequency: "High", magnitude: 7.2, numberOfEarthquakes: 200),
+            Country(id: UUID(), name: "Vietnam", flag: "🇻🇳", frequency: "Medium", magnitude: 6.8, numberOfEarthquakes: 85)
         ]
     }
 } 

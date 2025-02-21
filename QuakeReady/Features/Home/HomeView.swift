@@ -158,7 +158,6 @@ struct HomeView: View {
 }
 
 struct CountryCard: View {
-    
     let country: Country
     
     var body: some View {
@@ -175,8 +174,8 @@ struct CountryCard: View {
                 .fontWeight(.bold)
             
             Group {
-                Text("Damages: \(country.damages)")
-                Text("Injuries: \(country.injuries)")
+                Text("Magnitude: \(country.magnitude, specifier: "%.1f")")
+                Text("\(country.numberOfEarthquakes) earthquakes/year")
             }
             .font(.subheadline)
             .foregroundColor(.gray)
@@ -203,9 +202,9 @@ struct Country: Identifiable {
     let name: String
     let flag: String
     let frequency: String
-    let damages: String
-    let injuries: String
-}
+    let magnitude: Double
+    let numberOfEarthquakes: Int
+}   
 
 // Supporting Views
 struct QuickActionButton: View {
