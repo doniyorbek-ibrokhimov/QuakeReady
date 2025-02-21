@@ -31,85 +31,76 @@ struct OnboardingView: View {
         )
     ]
     
+    init(hasCompletedOnboarding: Binding<Bool>) {
+        self._hasCompletedOnboarding = hasCompletedOnboarding
+        
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.blue)
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor(Color.gray.opacity(0.3))
+    }
+    
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
+        VStack(spacing: 40) {
+            // Page Content
+            TabView(selection: $currentPage) {
+                ForEach(pages.indices, id: \.self) { index in
+                    VStack(spacing: 24) {
+                        Image(systemName: pages[index].icon)
+                            .font(.system(size: 80))
+                            .foregroundColor(pages[index].color)
+                            .symbolEffect(.bounce, options: .repeating)
+                        
+                        Text(pages[index].title)
+                            .font(.title.bold())
+                            .multilineTextAlignment(.center)
+                        
+                        Text(pages[index].description)
+                            .font(.body)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 32)
+                    }
+                    .tag(index)
+                    .padding(.top, 60)
+                }
+            }
+            .tabViewStyle(.page(indexDisplayMode: .always))
             
-            VStack(spacing: 40) {
-                // Page Content
-                TabView(selection: $currentPage) {
-                    ForEach(pages.indices, id: \.self) { index in
-                        VStack(spacing: 24) {
-                            Image(systemName: pages[index].icon)
-                                .font(.system(size: 80))
-                                .foregroundColor(pages[index].color)
-                                .symbolEffect(.bounce, options: .repeating)
-                            
-                            Text(pages[index].title)
-                                .font(.title.bold())
-                                .multilineTextAlignment(.center)
-                            
-                            Text(pages[index].description)
-                                .font(.body)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.gray)
-                                .padding(.horizontal, 32)
+            Spacer()
+            
+            // Action Buttons
+            VStack(spacing: 16) {
+                if currentPage < pages.count - 1 {
+                    Button("Next") {
+                        withAnimation {
+                            currentPage += 1
                         }
-                        .tag(index)
-                        .padding(.top, 60)
                     }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                
-                // Page Indicator
-                HStack(spacing: 8) {
-                    ForEach(pages.indices, id: \.self) { index in
-                        Circle()
-                            .fill(currentPage == index ? Color.blue : Color.gray.opacity(0.3))
-                            .frame(width: 8, height: 8)
-                            .animation(.spring, value: currentPage)
-                    }
-                }
-                
-                Spacer()
-                
-                // Action Buttons
-                VStack(spacing: 16) {
-                    Button(action: {
+                    .buttonStyle(.primary)
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    
+                    Button("Skip") {
                         withAnimation {
                             hasCompletedOnboarding = true
                         }
-                    }) {
-                        Text(currentPage == pages.count - 1 ? "Get Started" : "Skip")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(12)
                     }
-                    
-                    if currentPage < pages.count - 1 {
-                        Button(action: {
-                            withAnimation {
-                                currentPage += 1
-                            }
-                        }) {
-                            Text("Next")
-                                .font(.headline)
-                                .foregroundColor(.blue)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.blue.opacity(0.2))
-                                .cornerRadius(12)
+                    .foregroundColor(.blue)
+                    .font(.headline)
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
+                } else {
+                    Button("Get Started") {
+                        withAnimation {
+                            hasCompletedOnboarding = true
                         }
                     }
+                    .buttonStyle(.primary)
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 40)
             }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 40)
         }
         .foregroundColor(.white)
+        .animation(.spring, value: currentPage)
     }
 }
 
