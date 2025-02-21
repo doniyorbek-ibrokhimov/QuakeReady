@@ -147,14 +147,18 @@ struct QuizSummaryView: View {
     var body: some View {
         VStack(spacing: 24) {
             Text("Quiz Complete! 🎉")
-                .font(.title)
+                .font(.title.bold())
             
-            Text("\(score)/\(total) Correct")
-                .font(.title2)
+            VStack(spacing: 16) {
+                Text("\(score)/\(total) Correct")
+                Text("Accuracy: \(Int(Double(score) / Double(total) * 100))%")
+            }
+            .font(.title3)
             
             if score == total {
-                Text("Perfect Score! 🏅")
-                    .foregroundColor(.green)
+                Text("Quiz Master Badge Earned! 🏅")
+                    .font(.headline)
+                    .foregroundColor(.blue)
             }
             
             Spacer()
@@ -165,5 +169,6 @@ struct QuizSummaryView: View {
             .buttonStyle(.primary)
         }
         .padding()
+        .foregroundColor(.white)
     }
 }
