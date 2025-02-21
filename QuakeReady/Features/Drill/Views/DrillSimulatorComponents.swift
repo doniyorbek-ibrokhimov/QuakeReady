@@ -50,15 +50,18 @@ struct TimerView: View {
     private func startTimer() {
         viewModel.isTimerRunning = true
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-            if self.timeRemaining > 0 && self.viewModel.isTimerRunning {
+            guard self.viewModel.isTimerRunning else {
+                timer.invalidate()
+                return
+            }
+            
+            if self.timeRemaining > 0 {
                 withAnimation {
                     self.timeRemaining -= 1
                     self.value = CGFloat(self.timeRemaining) / CGFloat(viewModel.drill.duration)
                 }
-                self.viewModel.totalTimeTaken += 1
-            } else {
-                timer.invalidate()
             }
+            self.viewModel.totalTimeTaken += 1
         }
     }
 }
