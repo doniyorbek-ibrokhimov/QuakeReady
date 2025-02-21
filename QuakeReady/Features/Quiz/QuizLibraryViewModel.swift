@@ -15,7 +15,7 @@ extension QuizLibraryView {
             self.modelContext = modelContext
             self.quizzes = [
                 Quiz(
-                    id: Self.basicSafetyQuizId,  // Use constant ID
+                    id: Self.basicSafetyQuizId,
                     title: "Basic Earthquake Safety",
                     icon: "🏠",
                     category: "Home Safety",
@@ -28,7 +28,7 @@ extension QuizLibraryView {
                                 "Call emergency immediately"
                             ],
                             correctIndex: 1,
-                            feedback: "Right! Drop, cover, hold is the safest response."
+                            feedback: "Drop, cover, hold is the safest response"
                         ),
                         Question(
                             scenario: "You're in a mall during a quake",
@@ -38,7 +38,7 @@ extension QuizLibraryView {
                                 "Stand near windows"
                             ],
                             correctIndex: 0,
-                            feedback: "Correct! Stay low and protected."
+                            feedback: "Stay low and protected."
                         ),
                         Question(
                             scenario: "During an earthquake at home, you should",
@@ -48,7 +48,7 @@ extension QuizLibraryView {
                                 "Call emergency immediately"
                             ],
                             correctIndex: 1,
-                            feedback: "Right! Drop, cover, hold is the safest response."
+                            feedback: "Drop, cover, hold is the safest response"
                         ),
                         Question(
                             scenario: "After an earthquake, you notice gas smell",
@@ -58,12 +58,12 @@ extension QuizLibraryView {
                                 "Exit immediately"
                             ],
                             correctIndex: 2,
-                            feedback: "Correct! Leave the area and call authorities."
+                            feedback: "Leave the area and call authorities"
                         )
                     ]
                 ),
                 Quiz(
-                    id: Self.postQuakeQuizId,  // Use constant ID
+                    id: Self.postQuakeQuizId,
                     title: "Post-Earthquake Actions",
                     icon: "⚠️",
                     category: "Emergency Response",
@@ -76,7 +76,7 @@ extension QuizLibraryView {
                                 "Exit immediately"
                             ],
                             correctIndex: 2,
-                            feedback: "Correct! Leave the area and call authorities."
+                            feedback: "Leave the area and call authorities"
                         )
                     ]
                 )

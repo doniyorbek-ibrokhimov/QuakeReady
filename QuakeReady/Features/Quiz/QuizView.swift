@@ -118,9 +118,18 @@ struct FeedbackView: View {
     let isCorrect: Bool
     let feedback: String
     
+    var dynamicFeedback: String {
+        isCorrect ? "Correct! 🎉" : "Incorrect 😢"
+    }
+    
     var body: some View {
-        HStack {
-            Image(systemName: isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
+        VStack {
+            HStack {
+                Image(systemName: isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
+                
+                Text(dynamicFeedback)
+            }
+            
             Text(feedback)
         }
         .font(.body)
@@ -133,7 +142,6 @@ struct QuizSummaryView: View {
     let score: Int
     let total: Int
     
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var viewModel: QuizLibraryView.ViewModel
     
     var body: some View {
@@ -152,7 +160,6 @@ struct QuizSummaryView: View {
             Spacer()
             
             Button("Back to Library") {
-//                dismiss()
                 viewModel.selectedQuiz = nil
             }
             .buttonStyle(.primary)
