@@ -11,6 +11,8 @@ struct QuizView: View {
         ))
     }
     
+    let contentTransition: ContentTransition = .numericText(countsDown: true)
+    
     var body: some View {
         VStack(spacing: 32) {
             // Progress dots
@@ -26,6 +28,7 @@ struct QuizView: View {
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(12)
                 .padding(.horizontal)
+                .contentTransition(contentTransition)
             
             // Answer options
             VStack(spacing: 16) {
@@ -37,6 +40,7 @@ struct QuizView: View {
                         showResult: viewModel.showFeedback,
                         action: { viewModel.selectAnswer(index) }
                     )
+                    .contentTransition(contentTransition)
                 }
             }
             .padding(.horizontal)
@@ -49,6 +53,7 @@ struct QuizView: View {
                     isCorrect: viewModel.selectedAnswerIndex == viewModel.quiz.questions[viewModel.currentQuestionIndex].correctIndex,
                     feedback: viewModel.quiz.questions[viewModel.currentQuestionIndex].feedback
                 )
+                .contentTransition(contentTransition)
             }
             
             HStack {
