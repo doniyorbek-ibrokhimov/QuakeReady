@@ -14,7 +14,9 @@ struct QuakeReadyApp: App {
     
     init() {
         do {
-            container = try ModelContainer(for: BadgeAchievement.self)
+            container = try ModelContainer(
+                for: BadgeAchievement.self, DrillAchievement.self
+            )
         } catch {
             //FIXME: handle it properly
             fatalError("Failed to initialize ModelContainer: \(error)")

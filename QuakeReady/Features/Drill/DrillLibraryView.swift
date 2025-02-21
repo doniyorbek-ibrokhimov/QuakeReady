@@ -1,8 +1,13 @@
 import SwiftUI
+import SwiftData
 
 struct DrillLibraryView: View {
-    @StateObject private var viewModel = ViewModel()
+    @StateObject private var viewModel: ViewModel
     @EnvironmentObject private var badgeViewModel: BadgeGalleryView.ViewModel
+    
+    init(modelContext: ModelContext) {
+        _viewModel = StateObject(wrappedValue: ViewModel(modelContext: modelContext))
+    }
     
     var body: some View {
         NavigationStack {

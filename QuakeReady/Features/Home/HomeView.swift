@@ -11,8 +11,10 @@ import SwiftData
 struct HomeView: View {
     @State private var selectedTab = 0
     @StateObject private var badgeGalleryVM: BadgeGalleryView.ViewModel
+    let modelContext: ModelContext
 
     init(modelContext: ModelContext) {
+        self.modelContext = modelContext
         _badgeGalleryVM = StateObject(wrappedValue: BadgeGalleryView.ViewModel(modelContext: modelContext))
     }
     
@@ -41,7 +43,7 @@ struct HomeView: View {
                 .tag(0)
             
             // Drill Tab
-            DrillLibraryView()
+            DrillLibraryView(modelContext: modelContext)
                 .tabItem {
                     Label("Drill", systemImage: "figure.run")
                 }

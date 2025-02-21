@@ -143,14 +143,16 @@ extension DrillLibraryView.DrillSimulatorView {
         }
         
         private func completeDrill() {
-            // Find and update the actual drill in DrillLibraryViewModel
-            if let index = drillLibraryViewModel.drills.firstIndex(where: { $0.id == drill.id }) {
-                drillLibraryViewModel.drills[index].lastCompleted = Date()
-            }
-            
             // Calculate accuracy based on timing and steps completed
-            //FIXME: drill accuracy also needs to be considered while setting the badge below
             drillAccuracy = min(1.0, Double(drill.duration) / Double(totalTimeTaken))
+            
+            // Save drill completion
+            drillLibraryViewModel.completeDrill(
+                type: drill.type,
+                date: Date(),
+                accuracy: drillAccuracy,
+                timeTaken: totalTimeTaken
+            )
             
             // Check and award badges
             let completedDrills = drillLibraryViewModel.recentDrills.count
