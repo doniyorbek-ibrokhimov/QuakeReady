@@ -74,6 +74,7 @@ struct IntensityMeter: View {
             VStack {
                 Text(String(format: "%.1f", 3 + (value * 3.5)))
                     .font(.system(size: 32, weight: .bold, design: .monospaced))
+                    .contentTransition(.numericText())
                 Text("Magnitude")
                     .font(.caption)
                     .foregroundColor(.gray)
