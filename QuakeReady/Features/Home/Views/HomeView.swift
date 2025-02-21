@@ -8,11 +8,17 @@
 import SwiftUI
 import SwiftData
 
+/// The main home screen of the QuakeReady app.
+/// Provides quick access to drills, quizzes, and displays user progress and risk assessments.
 struct HomeView: View {
+    /// View model managing the home screen state and business logic.
     @StateObject private var viewModel: ViewModel
-    private let modelContext: ModelContext
-
     
+    /// SwiftData context for persistence.
+    private let modelContext: ModelContext
+    
+    /// Initializes a new home view.
+    /// - Parameter modelContext: SwiftData context for persistence
     init(modelContext: ModelContext) {
         _viewModel = StateObject(wrappedValue: ViewModel(modelContext: modelContext))
         self.modelContext = modelContext
@@ -47,6 +53,8 @@ struct HomeView: View {
         .environmentObject(viewModel.badgeGalleryViewModel)
     }
     
+    /// The main content view of the home screen.
+    /// Displays quick actions, progress overview, and risk assessment sections.
     private var mainView: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -65,6 +73,7 @@ struct HomeView: View {
         .foregroundColor(.white)
     }
     
+    /// Section displaying quick action buttons for starting drills and quizzes.
     private var quickActionsSection: some View {
         VStack(spacing: 16) {
             Text("Quick Actions")
@@ -93,6 +102,7 @@ struct HomeView: View {
         }
     }
     
+    /// Section showing progress cards for drills, quizzes, and badges.
     private var progressSection: some View {
         VStack(spacing: 16) {
             HStack {
@@ -138,6 +148,7 @@ struct HomeView: View {
         }
     }
     
+    /// Section displaying global and nearby earthquake risk assessments.
     private var riskAssessmentSection: some View {
         VStack(spacing: 24) {
             // Global Risks
@@ -155,135 +166,4 @@ struct HomeView: View {
             )
         }
     }
-}
-
-struct CountryCard: View {
-    let country: Country
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(country.flag)
-                Text(country.name)
-                    .font(.headline)
-            }
-            
-            Text("Frequency: \(country.frequency)")
-                .font(.body)
-                .foregroundColor(country.frequency == "High" ? .red : .orange)
-                .fontWeight(.bold)
-            
-            Group {
-                Text("Strongest: M\(country.magnitude, specifier: "%.1f")")
-                Text("\(country.numberOfEarthquakes) earthquakes/year")
-            }
-            .font(.subheadline)
-            .foregroundColor(.gray)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemGray5))
-        .cornerRadius(12)
-    }
-}
-
-// TODO: move to a separate file
-struct ScaleButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 1.05 : 1)
-            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
-    }
-}
-
-// TODO: move to a separate file
-struct Country: Identifiable {
-    let id: UUID
-    let name: String
-    let flag: String
-    let frequency: String
-    let magnitude: Double
-    let numberOfEarthquakes: Int
-}   
-
-// Supporting Views
-struct QuickActionButton: View {
-    let title: String
-    let icon: String
-    let color: Color
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                Text(title)
-                    .font(.subheadline.bold())
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(color.opacity(0.2))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(color.opacity(0.5), lineWidth: 1)
-            )
-        }
-        .foregroundColor(color)
-        .buttonStyle(ScaleButtonStyle())
-    }
-}
-
-struct ProgressCard: View {
-    let title: String
-    let icon: String
-    let progress: Double
-    let detail: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.title2)
-                Text(title)
-                    .font(.headline)
-            }
-            
-            ProgressView(value: progress)
-                .tint(.blue)
-            
-            Text(detail)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-        }
-        .padding()
-        .frame(width: 160)
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(12)
-    }
-}
-
-struct RiskSection: View {
-    let title: String
-    let icon: String
-    let countries: [Country]
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Label(title, systemImage: icon)
-                .font(.title2.bold())
-                .padding(.horizontal)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHGrid(rows: [GridItem(.flexible())], spacing: 16) {
-                    ForEach(countries) { country in
-                        CountryCard(country: country)
-                            .frame(width: 200)
-                    }
-                }
-                .padding(.horizontal)
-            }
-        }
-    }
-}
+}  
