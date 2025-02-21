@@ -9,74 +9,124 @@ extension QuizLibraryView {
         
         // Store quiz IDs as static constants
         private static let basicSafetyQuizId = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
-        private static let postQuakeQuizId = UUID(uuidString: "F621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        private static let postQuizId = UUID(uuidString: "F621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        private static let elevatorQuizId = UUID(uuidString: "F621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        private static let crowdSafetyQuizId = UUID(uuidString: "A621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
         
         init(modelContext: ModelContext) {
             self.modelContext = modelContext
             self.quizzes = [
                 Quiz(
                     id: Self.basicSafetyQuizId,
-                    title: "Basic Earthquake Safety",
-                    icon: "🏠",
-                    category: "Home Safety",
+                    title: "Basic Drop-Cover-Hold",
+                    icon: "⚠️",
+                    category: "Basic Safety",
                     questions: [
                         Question(
-                            scenario: "During an earthquake at home, you should",
+                            scenario: "When you first feel earthquake shaking, what's your immediate action?",
                             options: [
-                                "Use elevator to evacuate",
-                                "Drop, cover, and hold on",
-                                "Call emergency immediately"
+                                "Run outside quickly",
+                                "Drop to the ground",
+                                "Call emergency services"
                             ],
                             correctIndex: 1,
-                            feedback: "Drop, cover, hold is the safest response"
+                            feedback: "Drop to the ground immediately to prevent falling"
                         ),
                         Question(
-                            scenario: "You're in a mall during a quake",
+                            scenario: "After dropping, what should you do to protect your head?",
                             options: [
-                                "Hide under a counter",
-                                "Run to the exit",
-                                "Stand near windows"
-                            ],
-                            correctIndex: 0,
-                            feedback: "Stay low and protected."
-                        ),
-                        Question(
-                            scenario: "During an earthquake at home, you should",
-                            options: [
-                                "Use elevator to evacuate",
-                                "Drop, cover, and hold on",
-                                "Call emergency immediately"
+                                "Cover head with hands only",
+                                "Get under sturdy furniture",
+                                "Use a pillow or cushion"
                             ],
                             correctIndex: 1,
-                            feedback: "Drop, cover, hold is the safest response"
+                            feedback: "A sturdy desk or table provides the best protection"
                         ),
                         Question(
-                            scenario: "After an earthquake, you notice gas smell",
+                            scenario: "While under cover, why is it important to hold on?",
                             options: [
-                                "Light a match to check",
-                                "Turn on ventilation",
-                                "Exit immediately"
+                                "To stay warm",
+                                "To prevent shelter movement",
+                                "To feel less scared"
                             ],
-                            correctIndex: 2,
-                            feedback: "Leave the area and call authorities"
+                            correctIndex: 1,
+                            feedback: "Hold on to prevent your shelter from moving away during shaking"
                         )
                     ]
                 ),
                 Quiz(
-                    id: Self.postQuakeQuizId,
-                    title: "Post-Earthquake Actions",
-                    icon: "⚠️",
-                    category: "Emergency Response",
+                    id: Self.elevatorQuizId,
+                    title: "Elevator Emergency",
+                    icon: "🛗",
+                    category: "Building Safety",
                     questions: [
                         Question(
-                            scenario: "After an earthquake, you notice gas smell",
+                            scenario: "If you're in an elevator when an earthquake starts, what's your first action?",
                             options: [
-                                "Light a match to check",
-                                "Turn on ventilation",
-                                "Exit immediately"
+                                "Press all floor buttons",
+                                "Call for help on intercom",
+                                "Wait for rescue"
+                            ],
+                            correctIndex: 0,
+                            feedback: "Press all buttons to increase chances of stopping at nearest floor"
+                        ),
+                        Question(
+                            scenario: "While the elevator is moving, how should you position yourself?",
+                            options: [
+                                "Sit on the floor",
+                                "Brace against the wall",
+                                "Stand in the center"
+                            ],
+                            correctIndex: 1,
+                            feedback: "Brace against the wall to maintain stability"
+                        ),
+                        Question(
+                            scenario: "Once the elevator stops, what's your priority?",
+                            options: [
+                                "Call emergency services",
+                                "Exit immediately",
+                                "Check phone signals"
+                            ],
+                            correctIndex: 1,
+                            feedback: "Exit as soon as possible to avoid being trapped"
+                        )
+                    ]
+                ),
+                Quiz(
+                    id: Self.crowdSafetyQuizId,
+                    title: "Crowd Safety Protocol",
+                    icon: "👥",
+                    category: "Public Safety",
+                    questions: [
+                        Question(
+                            scenario: "In a crowded space during an earthquake, what's your first priority?",
+                            options: [
+                                "Follow the crowd",
+                                "Stay calm and assess",
+                                "Call for help"
+                            ],
+                            correctIndex: 1,
+                            feedback: "Staying calm helps you make better decisions"
+                        ),
+                        Question(
+                            scenario: "When moving away from crowds, what should you avoid?",
+                            options: [
+                                "Open spaces",
+                                "Emergency exits",
+                                "Glass windows/facades"
                             ],
                             correctIndex: 2,
-                            feedback: "Leave the area and call authorities"
+                            feedback: "Glass can shatter during earthquakes"
+                        ),
+                        Question(
+                            scenario: "What's the best type of shelter in a crowded building?",
+                            options: [
+                                "Against interior walls",
+                                "Near exit doors",
+                                "Under decorative elements"
+                            ],
+                            correctIndex: 0,
+                            feedback: "Interior walls provide better structural support"
                         )
                     ]
                 )

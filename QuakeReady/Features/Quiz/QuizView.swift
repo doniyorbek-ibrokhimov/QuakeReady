@@ -70,6 +70,7 @@ struct QuizView: View {
                 .buttonStyle(.primary(isDisabled: viewModel.selectedAnswerIndex == nil))
             }
         }
+        .padding()
         .animation(.easeInOut, value: viewModel.currentQuestionIndex)
         .navigationDestination(isPresented: $viewModel.quizCompleted) {
             QuizSummaryView(
@@ -135,6 +136,7 @@ struct FeedbackView: View {
             }
             
             Text(feedback)
+                .multilineTextAlignment(.center)
         }
         .font(.body)
         .foregroundColor(isCorrect ? .green : .red)
