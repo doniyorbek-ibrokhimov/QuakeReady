@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct Quiz: Identifiable, Hashable {
-    let id: String
+    let id: UUID
     let title: String
     let icon: String
     let category: String
