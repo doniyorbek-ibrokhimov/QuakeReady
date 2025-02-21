@@ -27,7 +27,7 @@ extension DrillLibraryView {
         private var content: some View {
             VStack(spacing: 32) {
                 // Time Remaining Meter
-                IntensityMeter(
+                TimerView(
                     timeRemaining: viewModel.drill.duration
                 )
                 .frame(width: 120, height: 120)

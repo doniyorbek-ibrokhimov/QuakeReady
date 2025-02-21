@@ -1,58 +1,6 @@
 import SwiftUI
-import SpriteKit
 
-// MARK: - Environment View
-struct EnvironmentView: View {
-    let drill: Drill
-    let intensity: Double
-    
-    @State private var particleSystem = SKEmitterNode()
-    
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Background Scene
-                Image(backgroundImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .modifier(ShakeEffect(animatableData: intensity))
-                
-                // Debris Particles
-                SpriteView(scene: createDebrisScene(size: geometry.size))
-                    .opacity(intensity > 0.5 ? 0.5 : 0)
-                
-                // Cracks Overlay
-                CracksView(intensity: intensity)
-            }
-        }
-    }
-    
-    private var backgroundImage: String {
-        switch drill.type {
-        case .basic: return "room_background"
-        case .elevator: return "elevator_background"
-        case .crowd: return "mall_background"
-        }
-    }
-    
-    private func createDebrisScene(size: CGSize) -> SKScene {
-        let scene = SKScene(size: size)
-        scene.backgroundColor = .clear
-        scene.scaleMode = .fill
-        
-        if let emitter = SKEmitterNode(fileNamed: "DebrisParticles") {
-            emitter.position = CGPoint(x: size.width/2, y: size.height)
-            emitter.particleAlpha = CGFloat(intensity)
-            scene.addChild(emitter)
-        }
-        
-        return scene
-    }
-}
-
-// MARK: - Intensity Meter
-struct IntensityMeter: View {
+struct TimerView: View {
     @State private var timeRemaining: Int
     @State private var value: CGFloat = 0
     
@@ -71,7 +19,7 @@ struct IntensityMeter: View {
             // Value Circle
             Circle()
                 .trim(from: 0, to: value)
-                .stroke(intensityColor, style: StrokeStyle(
+                .stroke(progressColor, style: StrokeStyle(
                     lineWidth: 8,
                     lineCap: .round
                 ))
@@ -91,7 +39,7 @@ struct IntensityMeter: View {
         .onAppear(perform: startTimer)
     }
     
-    private var intensityColor: Color {
+    private var progressColor: Color {
         switch value {
         case 0.0..<0.4: return .red
         case 0.4..<0.7: return .yellow
@@ -111,36 +59,6 @@ struct IntensityMeter: View {
             } else {
                 timer.invalidate()
             }
-        }
-    }
-}
-
-// MARK: - Character View
-struct CharacterView: View {
-    let step: Int
-    @State private var rotation: Double = 0
-    
-    var body: some View {
-        ZStack {
-            // Character Figure
-            characterImage
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .rotation3DEffect(.degrees(rotation), axis: (x: 0, y: 1, z: 0))
-                .onTapGesture {
-                    withAnimation(.easeInOut(duration: 1)) {
-                        rotation += 360
-                    }
-                }
-        }
-    }
-    
-    private var characterImage: Image {
-        switch step {
-        case 1: return Image("character_standing")
-        case 2: return Image("character_crawling")
-        case 3: return Image("character_holding")
-        default: return Image("character_standing")
         }
     }
 }
@@ -209,41 +127,6 @@ struct ChecklistItem: Hashable {
     let done: Bool
 }
 
-struct ShakeEffect: GeometryEffect {
-    var animatableData: Double
-    
-    func effectValue(size: CGSize) -> ProjectionTransform {
-        let shake = animatableData * 10
-        let translation = CGFloat(sin(shake * .pi * 2) * 5)
-        return ProjectionTransform(CGAffineTransform(translationX: translation, y: 0))
-    }
-}
-
-// MARK: - Cracks View
-struct CracksView: View {
-    let intensity: Double
-    
-    var body: some View {
-        GeometryReader { geometry in
-            ForEach(0..<Int(intensity * 5), id: \.self) { index in
-                Path { path in
-                    let startX = CGFloat.random(in: 0...geometry.size.width)
-                    let startY = CGFloat.random(in: 0...geometry.size.height)
-                    path.move(to: CGPoint(x: startX, y: startY))
-                    
-                    for _ in 0..<3 {
-                        let endX = startX + CGFloat.random(in: -50...50)
-                        let endY = startY + CGFloat.random(in: -50...50)
-                        path.addLine(to: CGPoint(x: endX, y: endY))
-                    }
-                }
-                .stroke(Color.white.opacity(0.3), lineWidth: 1)
-            }
-        }
-        .opacity(intensity > 0.7 ? Double(intensity) : 0)
-    }
-}
-
 // MARK: - Action Button
 struct ActionButton: View {
     let currentStep: Int
@@ -260,7 +143,6 @@ struct ActionButton: View {
 // MARK: - Primary Button Style
 struct PrimaryButtonStyle: ButtonStyle {
     let isDisabled: Bool
-    
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
