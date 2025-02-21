@@ -17,6 +17,7 @@ struct Drill: Identifiable, Hashable {
     let difficulty: Difficulty
     let description: String
     let steps: [String]
+    let checklistItems: [[ChecklistItem]]
     let isNew: Bool
     var lastCompleted: Date?
     

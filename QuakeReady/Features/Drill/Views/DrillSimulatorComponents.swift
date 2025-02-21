@@ -73,10 +73,12 @@ extension Collection {
 struct InstructionCard: View {
     let step: Int
     let text: String
+    let checklistItems: [[ChecklistItem]]
     
-    init(step: Int, text: String) {
+    init(step: Int, text: String, checklistItems: [[ChecklistItem]]) {
         self.step = step
         self.text = text
+        self.checklistItems = checklistItems
     }
     
     var body: some View {
@@ -104,21 +106,6 @@ struct InstructionCard: View {
         .background(Color.gray.opacity(0.2))
         .cornerRadius(12)
     }
-    
-    private var checklistItems: [[ChecklistItem]] = [
-        [
-            ChecklistItem(text: "Move away from windows", done: true),
-            ChecklistItem(text: "Find clear space", done: true)
-        ],
-        [
-            ChecklistItem(text: "Protect head and neck", done: true),
-            ChecklistItem(text: "Stay away from furniture", done: false)
-        ],
-        [
-            ChecklistItem(text: "Grip stable object", done: true),
-            ChecklistItem(text: "Maintain position", done: true)
-        ]
-    ]
 }
 
 // MARK: - Supporting Types

@@ -35,7 +35,8 @@ extension DrillLibraryView {
                 // Step Instructions
                 InstructionCard(
                     step: viewModel.currentStep,
-                    text: viewModel.drill.steps[viewModel.currentStep - 1]
+                    text: viewModel.drill.steps[viewModel.currentStep - 1],
+                    checklistItems: viewModel.drill.checklistItems
                 )
                 
                 Spacer()
