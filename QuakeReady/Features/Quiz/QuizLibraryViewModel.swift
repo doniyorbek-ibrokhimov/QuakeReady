@@ -8,15 +8,15 @@ extension QuizLibraryView {
         private var modelContext: ModelContext
         
         // Store quiz IDs as static constants
-        private static let basicSafetyQuizId = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
-        private static let postQuakeQuizId = UUID(uuidString: "F621E1F8-C36C-495A-93FC-0C247A3E6E5F")!
+        private static let basicSafetyQuizId = "Basic Earthquake Safety"
+        private static let postQuakeQuizId = "Post-Earthquake Actions"
         
         init(modelContext: ModelContext) {
             self.modelContext = modelContext
             self.quizzes = [
                 Quiz(
-                    id: Self.basicSafetyQuizId,  // Use constant ID
-                    title: "Basic Earthquake Safety",
+                    id: Self.basicSafetyQuizId,  // Use title as ID
+                    title: Self.basicSafetyQuizId,
                     icon: "🏠",
                     category: "Home Safety",
                     questions: [
@@ -63,8 +63,8 @@ extension QuizLibraryView {
                     ]
                 ),
                 Quiz(
-                    id: Self.postQuakeQuizId,  // Use constant ID
-                    title: "Post-Earthquake Actions",
+                    id: Self.postQuakeQuizId,  // Use title as ID
+                    title: Self.postQuakeQuizId,
                     icon: "⚠️",
                     category: "Emergency Response",
                     questions: [
@@ -100,7 +100,7 @@ extension QuizLibraryView {
             }
         }
         
-        func completeQuiz(id: UUID, score: Int, totalQuestions: Int) {
+        func completeQuiz(id: String, score: Int, totalQuestions: Int) {
             // Create and save achievement
             let achievement = QuizAchievement(
                 quizId: id,
