@@ -13,10 +13,12 @@ extension QuizView {
         @Published var previousAnswers: [Int?]
         
         private let badgeProgress: BadgeProgress
+        private let quizLibraryViewModel: QuizLibraryView.ViewModel
         
-        init(quiz: Quiz, badgeProgress: BadgeProgress) {
+        init(quiz: Quiz, badgeProgress: BadgeProgress, quizLibraryViewModel: QuizLibraryView.ViewModel) {
             self.quiz = quiz
             self.badgeProgress = badgeProgress
+            self.quizLibraryViewModel = quizLibraryViewModel
             self.previousAnswers = Array(repeating: nil, count: quiz.questions.count)
         }
         
@@ -57,18 +59,21 @@ extension QuizView {
         private func completeQuiz() {
             let isPerfectScore = correctAnswers == quiz.questions.count
             
-            // Update quiz completion status
-            var updatedQuiz = quiz
-            updatedQuiz.completion = Double(correctAnswers) / Double(quiz.questions.count)
-            updatedQuiz.lastAttemptDate = Date()
-            updatedQuiz.bestScore = max(correctAnswers, quiz.bestScore ?? 0)
+            // Update quiz completion status through QuizLibraryViewModel
+            quizLibraryViewModel.completeQuiz(
+                id: quiz.id,
+                score: correctAnswers,
+                totalQuestions: quiz.questions.count
+            )
             
             // Check and award badges
             if isPerfectScore {
                 badgeProgress.earnBadge(.quickLearner)
                 
                 // Check if all quizzes are completed with perfect scores
-                let allQuizzesPerfect = true //FIXME: Implement this check
+                let allQuizzesPerfect = quizLibraryViewModel.quizzes.allSatisfy { quiz in
+                    quiz.completion == 1.0
+                }
                 if allQuizzesPerfect {
                     badgeProgress.earnBadge(.safetyScholar)
                 }

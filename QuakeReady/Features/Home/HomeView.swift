@@ -50,7 +50,7 @@ struct HomeView: View {
                 .tag(1)
             
             // Quiz Tab
-            QuizLibraryView()
+            QuizLibraryView(modelContext: modelContext)
                 .tabItem {
                     Label("Quiz", systemImage: "questionmark.circle.fill")
                 }

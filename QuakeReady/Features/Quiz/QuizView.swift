@@ -2,10 +2,13 @@ import SwiftUI
 
 struct QuizView: View {
     @StateObject private var viewModel: ViewModel
-    @EnvironmentObject private var quizLibraryViewModel: QuizLibraryView.ViewModel
     
-    init(quiz: Quiz, badgeProgress: BadgeProgress) {
-        _viewModel = StateObject(wrappedValue: ViewModel(quiz: quiz, badgeProgress: badgeProgress))
+    init(quiz: Quiz, badgeProgress: BadgeProgress, quizLibraryViewModel: QuizLibraryView.ViewModel) {
+        _viewModel = StateObject(wrappedValue: ViewModel(
+            quiz: quiz,
+            badgeProgress: badgeProgress,
+            quizLibraryViewModel: quizLibraryViewModel
+        ))
     }
     
     var body: some View {

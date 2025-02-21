@@ -15,7 +15,9 @@ struct QuakeReadyApp: App {
     init() {
         do {
             container = try ModelContainer(
-                for: BadgeAchievement.self, DrillAchievement.self
+                for: BadgeAchievement.self,
+                DrillAchievement.self,
+                QuizAchievement.self
             )
         } catch {
             //FIXME: handle it properly

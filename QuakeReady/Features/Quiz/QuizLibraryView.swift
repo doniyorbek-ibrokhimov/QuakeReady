@@ -1,26 +1,20 @@
 import SwiftUI
-
-struct Quiz: Identifiable, Hashable {
-    let id = UUID()
-    let title: String
-    let icon: String
-    let category: String
-    let questions: [Question]
-    var completion: Double
-    var lastAttemptDate: Date?
-    var bestScore: Int?
-}
+import SwiftData
 
 //FIXME: save previously selected answers
 struct QuizLibraryView: View {
-    @StateObject private var viewModel = ViewModel()
+    @StateObject private var viewModel: ViewModel
     @EnvironmentObject private var badgeViewModel: BadgeGalleryView.ViewModel
+    
+    init(modelContext: ModelContext) {
+        _viewModel = StateObject(wrappedValue: ViewModel(modelContext: modelContext))
+    }
     
     var body: some View {
         NavigationStack {
             content
                 .navigationDestination(item: $viewModel.selectedQuiz) { quiz in
-                    QuizView(quiz: quiz, badgeProgress: badgeViewModel.badgeProgress)
+                    QuizView(quiz: quiz, badgeProgress: badgeViewModel.badgeProgress, quizLibraryViewModel: viewModel)
                         .navigationBarBackButtonHidden()
                         .toolbar {
                             ToolbarItem(placement: .topBarLeading) {
@@ -87,9 +81,13 @@ struct QuizCard: View {
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("\(quiz.questions.count) Questions • Completed: \(Int(quiz.completion * 100))%")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+                Group {
+                    grammarCorrectedText(count: quiz.questions.count, baseString: "Question")
+                    +
+                    Text(" • Completed: \(Int(quiz.completion * 100))%")
+                }
+                .font(.subheadline)
+                .foregroundColor(.gray)
                 
                 ProgressView(value: quiz.completion)
                     .tint(.blue)
