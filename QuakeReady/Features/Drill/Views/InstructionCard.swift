@@ -10,12 +10,12 @@ import SwiftUI
 struct InstructionCard: View {
     let step: Int
     let text: String
-    let checklistItems: [[ChecklistItem]]
+    let instructions: [[Instruction]]
     
-    init(step: Int, text: String, checklistItems: [[ChecklistItem]]) {
+    init(step: Int, text: String, instructions: [[Instruction]]) {
         self.step = step
         self.text = text
-        self.checklistItems = checklistItems
+        self.instructions = instructions
     }
     
     var body: some View {
@@ -29,7 +29,7 @@ struct InstructionCard: View {
                 .multilineTextAlignment(.center)
             
             // Instructions
-            if let instructions = checklistItems[safe: step - 1] {
+            if let instructions = instructions[safe: step - 1] {
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(instructions, id: \.self) { item in
                         Label(
