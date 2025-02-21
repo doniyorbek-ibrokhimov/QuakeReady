@@ -72,7 +72,11 @@ struct QuizView: View {
         }
         .animation(.easeInOut, value: viewModel.currentQuestionIndex)
         .navigationDestination(isPresented: $viewModel.quizCompleted) {
-            QuizSummaryView(score: viewModel.correctAnswers, total: viewModel.quiz.questions.count)
+            QuizSummaryView(
+                score: viewModel.correctAnswers,
+                total: viewModel.quiz.questions.count,
+                earnedBadges: viewModel.earnedBadges
+            )
         }
     }
 }
@@ -141,6 +145,7 @@ struct FeedbackView: View {
 struct QuizSummaryView: View {
     let score: Int
     let total: Int
+    let earnedBadges: [BadgeType]
     
     @EnvironmentObject private var viewModel: QuizLibraryView.ViewModel
     
@@ -155,10 +160,16 @@ struct QuizSummaryView: View {
             }
             .font(.title3)
             
-            if score == total {
-                Text("Quiz Master Badge Earned! 🏅")
-                    .font(.headline)
-                    .foregroundColor(.blue)
+            // Show earned badges if any
+            if !earnedBadges.isEmpty {
+                VStack(spacing: 12) {
+                    ForEach(earnedBadges, id: \.self) { badge in
+                        Text("\(badge.title) Badge Earned! 🏅")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                    }
+                }
+                .transition(.scale.combined(with: .opacity))
             }
             
             Spacer()

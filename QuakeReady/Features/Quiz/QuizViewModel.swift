@@ -11,6 +11,7 @@ extension QuizView {
         @Published var quizCompleted = false
         @Published var correctAnswers = 0
         @Published var previousAnswers: [Int?]
+        @Published var earnedBadges: [BadgeType] = []
         
         private let badgeProgress: BadgeProgress
         private let quizLibraryViewModel: QuizLibraryView.ViewModel
@@ -58,6 +59,7 @@ extension QuizView {
         //FIXME: trigger ui update in badge gallery view
         private func completeQuiz() {
             let isPerfectScore = correctAnswers == quiz.questions.count
+            var newlyEarnedBadges: [BadgeType] = []
             
             // Update quiz completion status through QuizLibraryViewModel
             quizLibraryViewModel.completeQuiz(
@@ -68,18 +70,23 @@ extension QuizView {
             
             // Check and award badges
             if isPerfectScore {
-                badgeProgress.earnBadge(.quickLearner)
+                if !badgeProgress.isEarned(.quickLearner) {
+                    badgeProgress.earnBadge(.quickLearner)
+                    newlyEarnedBadges.append(.quickLearner)
+                }
                 
                 // Check if all quizzes are completed with perfect scores
                 let allQuizzesPerfect = quizLibraryViewModel.quizzes.allSatisfy { quiz in
                     quiz.completion == 1.0
                 }
-                if allQuizzesPerfect {
+                if allQuizzesPerfect && !badgeProgress.isEarned(.safetyScholar) {
                     badgeProgress.earnBadge(.safetyScholar)
+                    newlyEarnedBadges.append(.safetyScholar)
                 }
             }
             
             quizCompleted = true
+            earnedBadges = newlyEarnedBadges  // Store earned badges to pass to summary view
         }
     }
-} 
+}
