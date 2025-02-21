@@ -16,6 +16,7 @@ extension DrillLibraryView {
                     icon: "⚠️",
                     duration: 30,
                     difficulty: .beginner,
+                    description: "The Drop-Cover-Hold technique is your first line of defense during an earthquake. This drill teaches you how to quickly get to the ground, find appropriate cover, and maintain your position until the shaking stops. This fundamental skill can prevent injuries from falling objects and collapsing structures.",
                     steps: ["Drop to the ground", "Cover your head", "Hold on"],
                     isNew: false
                 ),
@@ -25,6 +26,7 @@ extension DrillLibraryView {
                     icon: "🛗",
                     duration: 45,
                     difficulty: .intermediate,
+                    description: "Being trapped in an elevator during an earthquake can be dangerous. This drill focuses on quick evacuation techniques and proper positioning while inside. Learn how to use elevator emergency features and protect yourself if stuck between floors.",
                     steps: ["Press all floor buttons", "Brace against wall", "Exit quickly when possible"],
                     isNew: true
                 ),
@@ -34,6 +36,7 @@ extension DrillLibraryView {
                     icon: "👥",
                     duration: 60,
                     difficulty: .advanced,
+                    description: "Earthquakes in crowded spaces present unique challenges. This drill teaches you how to navigate through crowds safely, identify secure shelter spots in public buildings, and avoid common hazards like glass facades and decorative elements that may fall during shaking.",
                     steps: ["Stay calm", "Move away from crowds", "Find stable shelter"],
                     isNew: true
                 )

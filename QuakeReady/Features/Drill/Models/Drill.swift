@@ -15,6 +15,7 @@ struct Drill: Identifiable, Hashable {
     let icon: String
     let duration: Int
     let difficulty: Difficulty
+    let description: String
     let steps: [String]
     let isNew: Bool
     var lastCompleted: Date?
