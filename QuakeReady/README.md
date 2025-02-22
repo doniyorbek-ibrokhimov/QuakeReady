@@ -58,39 +58,6 @@ QuakeReady is an iOS application designed to help users prepare for and respond 
 - BadgeGalleryViewModel: Tracks achievements and unlocks
 - HomeViewModel: Coordinates overall app state
 
-## Getting Started
-
-### Prerequisites
-- iOS 15.0 or later
-- Xcode 13.0 or later
-- Swift 5.5 or later
-
-### Installation
-1. Clone the repository
-2. Open QuakeReady.xcodeproj in Xcode
-3. Build and run the project
-
-## Project Structure
-
-QuakeReady/
-├── Features/
-│   ├── Drill/
-│   ├── Quiz/
-│   ├── BadgeGallery/
-│   ├── Home/
-│   └── Onboarding/
-├── Models/
-├── Views/
-└── ViewModels/
-
-## Future Enhancements
-- Offline support
-- Localization
-- Real-time earthquake alerts
-- Community features
-- Additional drill scenarios
-- VR/AR integration possibilities
-
 ## Technical Highlights
 
 - MVVM Architecture
@@ -102,10 +69,9 @@ QuakeReady/
 - Comprehensive achievement system
 - Real-time progress tracking
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+## Future Enhancements
+- Localization
+- Real-time earthquake alerts
+- Community features
+- Additional drill scenarios
+- VR/AR integration possibilities
