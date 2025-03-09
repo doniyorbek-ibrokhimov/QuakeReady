@@ -21,7 +21,7 @@ QuakeReady is an iOS application designed to help users prepare for and respond 
 ### 3. Risk Assessment
 - Global and regional earthquake risk data
 - Real-time risk assessment updates
-- Data sourced from [Earthquakelist.org](https://earthquakelist.org/reports/top-100-countries-most-earthquakes/) (2024 statistics)
+- Data manually compiled from [Earthquakelist.org](https://earthquakelist.org/reports/top-100-countries-most-earthquakes/) (2024 statistics)
 - Top high-risk countries include:
   1. Mexico (1,972 significant earthquakes)
   2. Indonesia (1,870 significant earthquakes)
@@ -70,7 +70,6 @@ QuakeReady is an iOS application designed to help users prepare for and respond 
 - Real-time progress tracking
 
 ## Future Enhancements
-- Localization
 - Real-time earthquake alerts
 - Community features
 - Additional drill scenarios
